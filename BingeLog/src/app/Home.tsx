@@ -10,6 +10,8 @@ import { WebBadge } from '@/components/web-badge';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { mockMovies } from '@/data/movies';
 import { Feather } from '@expo/vector-icons';
+import { fetchMoviesByCategory } from '../Services/tmdb'; 
+import { useEffect } from 'react';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -17,13 +19,31 @@ const cardMargin = 10;
 const numColumns = 2;
 const cardWidth = (screenWidth - cardMargin * (numColumns+1)) / numColumns;
 
+interface Movie {
+    id: string;
+    title: string;
+    posterUrl: string;
+    rating: string;
+    year: string;
+    description: string;
+}
+
 export default function HomeScreen() {
+    const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedMovie, setSelectedMovie] = useState(null); //Kai paspaudi ant filmu
     const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
 
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
 
     const [category, setCategory] = useState('Trending');
+
+    useEffect(() => {
+    const loadData = async () => {
+        const data = await fetchMoviesByCategory(category);
+        setMovies(data);
+    };
+    loadData();
+}, [category]);
 
     const menuItems = [
         {name: 'Trending', icon: 'trending-up'},
@@ -96,7 +116,7 @@ export default function HomeScreen() {
 
         {/* FILMU SARASAS */}
         <FlatList
-            data = {mockMovies}
+            data = {movies}
             numColumns = {2}
             columnWrapperStyle={{justifyContent: 'space-between'}}
             keyExtractor = {(item) => item.id}
