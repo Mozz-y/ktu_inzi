@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getWishlist, addToWishlist, removeFromWishlist } from '../services/wishlist';
+import { addToWishlist, getWishlist, removeFromWishlist } from '../Services/wishlist';
+import { Movie } from '../types/movie';
 
 export const useWishlist = () => {
-    const [wishlist, setWishlist] = useState([]);
+    const [wishlist, setWishlist] = useState<Movie[]>([]);
 
     useEffect(() => {
         loadWishlist();
@@ -13,14 +14,18 @@ export const useWishlist = () => {
         setWishlist(data);
     };
 
-    const add = async (movie) =>{
+    const add = async (movie: Movie) =>{
         const updated = await addToWishlist(movie);
         setWishlist(updated);
     };
 
-    const remove = async (id) => {
+    const remove = async (id: string) => {
         const updated = await removeFromWishlist(id);
         setWishlist(updated);
+    };
+
+    const isInWishlist = (id: string) => {
+    return wishlist.some(m => m.id === id);
     };
 
     return { wishlist, add, remove };
