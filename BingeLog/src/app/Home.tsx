@@ -1,17 +1,22 @@
-import * as Device from 'expo-device';
-import { useState, useRef} from 'react';
-import { ScrollView, Animated, Dimensions, View, TouchableOpacity, Platform,
-    StyleSheet, FlatList, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header } from '@/components/Header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { mockMovies } from '@/data/movies';
-import { Feather } from '@expo/vector-icons';
-import { fetchMoviesByCategory } from '../Services/tmdb'; 
-import { useEffect } from 'react';
+import { useWishlist } from '@/hooks/useWishlist';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { useEffect, useRef, useState } from 'react';
+import {
+    Animated, Dimensions,
+    FlatList, Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { fetchMoviesByCategory } from '../Services/tmdb';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -32,7 +37,7 @@ export default function HomeScreen() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedMovie, setSelectedMovie] = useState(null); //Kai paspaudi ant filmu
     const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
-
+    const { add, remove, isInWishlist } = useWishlist();
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
 
     const [category, setCategory] = useState('Trending');
@@ -87,6 +92,14 @@ export default function HomeScreen() {
       }).start();
   }
 
+  const handleWishlistToggle = () => {
+    if (!selectedMovie) return;
+    if(isInWishlist(selectedMovie.id)){
+        remove(selectedMovie.id);
+    } else {
+        add (selectedMovie);
+    }
+  }
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -136,16 +149,29 @@ export default function HomeScreen() {
                     <Animated.View style = {styles.modalContent}>
                         <ScrollView>
                             <Image source = {{uri: selectedMovie.posterUrl}} style = {styles.modalPoster}/>
+                            
                             <ThemedText style={styles.cardTitle}>
                                 {selectedMovie.title}
                             </ThemedText>
+
                             <ThemedText style = {{marginTop:5}}>
                                 {selectedMovie.year} | {Array.isArray(selectedMovie.genre) ? selectedMovie.genre.join(', ') : selectedMovie.genre} | ⭐ {selectedMovie.rating}
                             </ThemedText>
+
                             <ThemedText style = {{marginTop:10}}>
                                 {selectedMovie.description}
-                            </ThemedText>
+                            </ThemedText>        
                         </ScrollView>
+                    {/*Wishlist mygtukas*/}
+                    <TouchableOpacity style = {styles.wishlistButton} onPress = {handleWishlistToggle}>
+                        <Ionicons name = {isInWishlist(selectedMovie.id) ? 'heart' : 'heart-outline'}
+                        size = {24}
+                        color = "white"
+                        />
+                        <ThemedText style = {styles.wishlistText}>
+                            {isInWishlist(selectedMovie.id) ?  'Remove from Wishlist' : 'Add to Wishlist'}
+                        </ThemedText>
+                    </TouchableOpacity>
                     </Animated.View>
                 </TouchableOpacity>
             </Animated.View>
@@ -204,9 +230,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContent:{
+        flex: 1,
         width: '90%',
         maxHeight: '80%',
         backgroundColor: 'white',
+        justifyContent: 'space-between',
         borderRadius: 15,
         padding: 20,
     },
@@ -252,5 +280,19 @@ const styles = StyleSheet.create({
         gap: Spacing.four,
         paddingBottom: -Spacing.four, //Jeigu 0 tai siek tiek bus tuscias tarpas tarp filmu ir navigation bar apacioj
         maxWidth: MaxContentWidth,
+    },
+    wishlistButton:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#e50914',
+        paddingVertical: 12,
+        borderRadius: 10,
+        marginTop: 10,
+        gap: 8,
+    },
+    wishlistText:{
+        color: 'white',
+        fontWeight: 'bold',
     },
 });

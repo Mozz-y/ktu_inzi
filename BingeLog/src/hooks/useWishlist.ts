@@ -25,8 +25,8 @@ export const useWishlist = () => {
     };
 
     const isInWishlist = (id: string) => {
-    return wishlist.some(m => m.id === id);
+        return wishlist.some(m => m.id === id);
     };
 
-    return { wishlist, add, remove };
+    return { wishlist, add, remove, isInWishlist };
 };
