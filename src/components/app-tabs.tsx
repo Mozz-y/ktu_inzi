@@ -6,13 +6,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function AppTabs() {
   const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const colors = Colors[scheme ?? 'light'];
 
   return (
       <Tabs
         screenOptions={{
             headerShown: false, //Jeigu true, atsiras tarpas tarp "BingeLog" ir ekrano virsaus
-            tabBarActiveTinColor: colors.text,
+            tabBarActiveTintColor: colors.text,
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: {backgroundColor: colors.background},
         }}

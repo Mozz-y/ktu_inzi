@@ -16,7 +16,8 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchMoviesByCategory } from '../Services/tmdb';
+import { fetchMoviesByCategory } from '../api/tmdb';
+import type { Movie } from '@/types/movie';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -24,18 +25,9 @@ const cardMargin = 10;
 const numColumns = 2;
 const cardWidth = (screenWidth - cardMargin * (numColumns+1)) / numColumns;
 
-interface Movie {
-    id: string;
-    title: string;
-    posterUrl: string;
-    rating: string;
-    year: string;
-    description: string;
-}
-
 export default function HomeScreen() {
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [selectedMovie, setSelectedMovie] = useState(null); //Kai paspaudi ant filmu
+    const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); //Kai paspaudi ant filmu
     const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
     const { add, remove, isInWishlist } = useWishlist();
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
@@ -59,7 +51,7 @@ export default function HomeScreen() {
     ];
 
     {/*Filmu card atidarymas/uzdarymas*/}
-    const openMovie = (movie) => {
+    const openMovie = (movie: Movie) => {
         setSelectedMovie(movie);
         Animated.timing(fadeAnim,{
             toValue: 1,
@@ -67,8 +59,7 @@ export default function HomeScreen() {
             useNativeDriver: true,
         }).start();
     };
-    const closeMovie = (movie) => {
-        setSelectedMovie(movie);
+    const closeMovie = () => {
         Animated.timing(fadeAnim,{
             toValue: 0,
             duration: 300,
@@ -116,14 +107,14 @@ export default function HomeScreen() {
                     closeMenu();
                     }}
                 >
-                    <Feather name = {item.icon} size = {20} color = "#000" style = {styles.menuIcon}/>
+                    <Feather name = {item.icon as any} size = {20} color = "#000" style = {styles.menuIcon}/>
                     <ThemedText>{item.name}</ThemedText>
                 </TouchableOpacity>
             ))}
         </Animated.View>
 
         {/* PAGRINDINIS HOME PAGE CONTENT */}
-        <ThemedText type = "categoryTitle" style = {styles.categoryTitle}>
+        <ThemedText type = "title" style = {styles.categoryTitle}>
         {category}
         </ThemedText>
 
@@ -132,7 +123,7 @@ export default function HomeScreen() {
             data = {movies}
             numColumns = {2}
             columnWrapperStyle={{justifyContent: 'space-between'}}
-            keyExtractor = {(item) => item.id}
+            keyExtractor = {(item) => item.id.toString()}
             renderItem={({item}) => (
                 <TouchableOpacity onPress={() => openMovie(item)}>
                     <MovieCard movie = {item}/>
@@ -182,7 +173,7 @@ export default function HomeScreen() {
   );
 }
 
-function MovieCard({ movie }){
+function MovieCard({ movie }: { movie: Movie }) {
     return (
         <View style={styles.card}>
             <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
@@ -273,9 +264,14 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginBottom: 5,
     },
+    rating: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
     safeArea: {
         flex: 1, //Flex = 1 reiskia kad uzpildo visa likusia erdve
-        paddingHorizontal: Spacing.zero, //Prideda tarpa is kaires ir desines
+        paddingHorizontal: Spacing.one, //Prideda tarpa is kaires ir desines
         alignItems: 'center', //centruoja vaikus horizontaliai
         gap: Spacing.four,
         paddingBottom: -Spacing.four, //Jeigu 0 tai siek tiek bus tuscias tarpas tarp filmu ir navigation bar apacioj

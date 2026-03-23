@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { mockMovies } from '@/data/movies';
+import { mockMovies } from '@/mocks/movies';
 import { Feather } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
                         data = {mockMovies}
                         numColumns = {2}
                         columnWrapperStyle={{justifyContent: 'space-between', marginBottom: 15}}
-                        keyExtractor = {item => item.id}
+                        keyExtractor = {item => item.id.toString()}
                         renderItem= {({ item }) => (
                             <View style = {styles.movieRow}>
                                 <Image source = {{uri : item.posterUrl }} style = {styles.moviePoster} />
@@ -138,7 +138,7 @@ function SettingRow({label}: {label: string}){
 function StatBox({icon, label, value, color,} : {icon : string; label: string; value: number | string; color: string}){
     return(
         <View style = {[styles.statBox, {borderColor: color}]}>
-            <Feather style = {styles.statIcon} name = {icon} size = {40} color = {color}/>
+            <Feather style = {styles.statIcon} name = {icon as any} size = {40} color = {color}/>
             <ThemedText style = {styles.statValue}>{value}</ThemedText>
             <ThemedText style = {styles.statLabel}>{label}</ThemedText>
         </View>
@@ -202,6 +202,10 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 5,
     },
+    movieRating:{
+        fontWeight: '400',
+        fontSize: 12,
+    },
     movieTitle:{
         fontWeight: 500,
     },
@@ -234,6 +238,10 @@ const styles = StyleSheet.create({
     },
     tabText:{
         fontWeight: '500',
+    },
+    tabTextActive:{
+        fontWeight: 'bold',
+        color: 'black',
     },
     title:{
         paddingHorizontal: 8,

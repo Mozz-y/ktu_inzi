@@ -11,15 +11,16 @@ import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { Picker } from '@react-native-picker/picker';
-import { mockMovies } from '@/data/movies';
+import { mockMovies } from '@/mocks/movies';
 import { Feather } from '@expo/vector-icons';
-import { searchMovies, fetchMoviesByCategory } from '../Services/tmdb';
+import { searchMovies, fetchMoviesByCategory } from '../api/tmdb';
+import type { Movie } from '@/types/movie';
 
 
 export default function ExploreScreen(){
     const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
-    const [movies, setMovies] = useState([]); 
+    const [movies, setMovies] = useState<Movie[]>([]); 
     const [isLoading, setIsLoading] = useState(false);
     const [selectedGenre, setSelectedGenre] = useState('All Genres');
     const [selectedSorting, setSelectedSorting] = useState('Rating');
@@ -46,7 +47,7 @@ export default function ExploreScreen(){
 }, [search]);
 
 const filteredMovies = useMemo(() => {
-    let result = [...movies];
+    let result: Movie[] = [...movies];
 
     // Žanrų filtravimas (kadangi tmdb.ts dabar negrąžina ID, filtruojame pagal pavadinimą arba paliekame ateičiai)
     if (selectedGenre !== 'All Genres') {
@@ -54,9 +55,9 @@ const filteredMovies = useMemo(() => {
         // arba filtruoti jei tavo tmdb.ts pridėtum žanrų ID.
     }
 
-    // RŪŠIAVIMAS (SVARBU: čia naudojame parseFloat, nes reitingas yra tekstas)
+    // RŪŠIAVIMAS (SVARBU: rating is now a number type)
     if (selectedSorting === 'Rating') {
-        result.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+        result.sort((a, b) => b.rating - a.rating);
     } else if (selectedSorting === 'Year') {
         result.sort((a, b) => parseInt(b.year) - parseInt(a.year));
     } else if (selectedSorting === 'Title') {
@@ -170,7 +171,7 @@ const filteredMovies = useMemo(() => {
     );
 }
 
-function MovieCard({ movie }){
+function MovieCard({ movie }: { movie: Movie }) {
     return (
         <View style={styles.card}>
             <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
@@ -275,6 +276,15 @@ const styles = StyleSheet.create({
        gap: Spacing.five,
        paddingHorizontal: Spacing.four,
        paddingTop: Spacing.three,
+    },
+    movieText: {
+        marginTop: 5,
+        fontSize: 14,
+    },
+    rating: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 5,
     },
     titleContainer: {
         gap: Spacing.three,

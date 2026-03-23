@@ -5,7 +5,7 @@ import { ThemedText} from '@/components/themed-text';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { Feather } from '@expo/vector-icons';
 
-export function Header({ onMenuPress }){
+export function Header({ onMenuPress }: { onMenuPress: () => void }) {
     return(
         <LinearGradient
             colors={['#7b2ff7', '#3a7bd5']}
@@ -35,6 +35,10 @@ const styles = StyleSheet.create({
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
         },
+    subtitle:{
+        fontSize: 14,
+        marginTop: 5,
+    },
     title:{
         marginLeft: 15,
     },

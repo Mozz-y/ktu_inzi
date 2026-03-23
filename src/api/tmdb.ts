@@ -1,5 +1,5 @@
-// src/services/tmdb.ts
-const API_KEY = process.env.EXPO_PUBLIC_TMDB_API_KEY;
+import { config } from '../config';
+const API_KEY = config.tmdbApiKey;
 const BASE_URL = 'https://api.themoviedb.org/3';
 
 export const fetchMoviesByCategory = async (category: string) => {
