@@ -4,6 +4,7 @@ import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWishlist } from '@/hooks/useWishlist';
+import { useWatched } from '../hooks/useWatched';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -30,6 +31,7 @@ export default function HomeScreen() {
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); //Kai paspaudi ant filmu
     const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
     const { add, remove, isInWishlist } = useWishlist();
+    const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
 
     const [category, setCategory] = useState('Trending');
@@ -91,6 +93,16 @@ export default function HomeScreen() {
         add (selectedMovie);
     }
   }
+
+    const handleSetRating = (rating: number) => {
+        if (selectedMovie) {
+            rateMovie(selectedMovie.id, rating);
+        }
+    };
+
+    const currentWatchedMovie = watchedMovies.find(m => String(m.id) === String(selectedMovie?.id));
+    const isWatched = !!currentWatchedMovie;
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -163,6 +175,40 @@ export default function HomeScreen() {
                             {isInWishlist(selectedMovie.id) ?  'Remove from Wishlist' : 'Add to Wishlist'}
                         </ThemedText>
                     </TouchableOpacity>
+                    {/* "Mark as Watched" button */}
+                    <TouchableOpacity 
+                        style={[styles.wishlistButton, { backgroundColor: isWatched ? '#dc3545' : '#28a745', marginTop: 10 }]} 
+                        onPress={() => {
+                            if (!selectedMovie) return;
+                            if (isWatched) {
+                                removeMovie(String(selectedMovie.id)); 
+                            } else {
+                                addMovie(selectedMovie); 
+                            }
+                        }}
+                    >
+                        <Ionicons name={isWatched ? "close-circle-outline" : "checkmark-circle-outline"} size={24} color="white" />
+                        <ThemedText style={styles.wishlistText}>
+                            {isWatched ? 'Remove from Watched' : 'Mark as Watched'}
+                        </ThemedText>
+                    </TouchableOpacity>
+                    {/* Rating option is visible only when seen */}
+                    {isWatched && (
+                        <View style={{ marginVertical: 15, alignItems: 'center' }}>
+                            <ThemedText style={{ fontWeight: 'bold', marginBottom: 5 }}>Your Rating:</ThemedText>
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <TouchableOpacity key={star} onPress={() => handleSetRating(star)}>
+                                        <Ionicons 
+                                            name={ (currentWatchedMovie.userRating || 0) >= star ? 'star' : 'star-outline' } 
+                                            size={30} 
+                                            color="#eab308" 
+                                        />
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+                    )}
                     </Animated.View>
                 </TouchableOpacity>
             </Animated.View>

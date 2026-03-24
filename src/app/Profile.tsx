@@ -7,9 +7,26 @@ import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { mockMovies } from '@/mocks/movies';
 import { Feather } from '@expo/vector-icons';
+import { useWatched } from '@/hooks/useWatched';
+import { useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native'; 
 
 export default function ProfileScreen() {
     const [activeTab, setActiveTab] = useState<'AlreadySeen' | 'Friends' | 'Settings'>('AlreadySeen');
+
+    const { movies, refreshMovies } = useWatched(); 
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshMovies();
+        }, [])
+    );
+
+    const watchedCount = movies.length;
+    const ratedMovies = movies.filter(m => (m.userRating || 0) > 0);
+    const avgRating = ratedMovies.length > 0 
+        ? (ratedMovies.reduce((acc, m) => acc + (m.userRating || 0), 0) / ratedMovies.length).toFixed(1) 
+        : '0';
 
     //Temporary data
     const friends = [
@@ -40,10 +57,10 @@ export default function ProfileScreen() {
 
             {/* Stats */}
             <View style = {styles.grid}>
-                <StatBox icon = "eye" label = "Movies Watched" value = '0' color= "#22c55e"/>
-                <StatBox icon = "star" label = "Movies Rated" value = '1' color= "#eab308"/>
-                <StatBox icon = "clock" label = "Watch Later" value = '2' color= "#3b82f6"/>
-                <StatBox icon = "star" label = "Avg Rating" value = '3' color= "#a855f7"/>
+                <StatBox icon="eye" label="Movies Watched" value={watchedCount} color="#22c55e"/>
+                <StatBox icon="star" label="Movies Rated" value={ratedMovies.length} color="#eab308"/>
+                <StatBox icon="clock" label="Watch Later" value="0" color="#3b82f6"/> 
+                <StatBox icon="star" label="Avg Rating" value={avgRating} color="#a855f7"/>
             </View>
 
             {/* Tabs tarp already seen, friends, settings */}
@@ -67,20 +84,28 @@ export default function ProfileScreen() {
                 {/*Already seen tab*/}
                 {activeTab === 'AlreadySeen' && (
                     <FlatList
-                        scrollEnabled = {false}
-                        data = {mockMovies}
-                        numColumns = {2}
+                        scrollEnabled={false}
+                        data={movies} 
+                        numColumns={2}
                         columnWrapperStyle={{justifyContent: 'space-between', marginBottom: 15}}
-                        keyExtractor = {item => item.id.toString()}
-                        renderItem= {({ item }) => (
-                            <View style = {styles.movieRow}>
-                                <Image source = {{uri : item.posterUrl }} style = {styles.moviePoster} />
-                                <ThemedText style = {styles.movieTitle}>{item.title}</ThemedText>
-                                <ThemedText style = {styles.movieRating}>{item.rating}</ThemedText>
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.movieRow}>
+                                <Image source={{ uri: item.posterUrl }} style={styles.moviePoster} />
+                                <ThemedText style={styles.movieTitle}>{item.title}</ThemedText>
+                                {/* Showing users rating if it exists */}
+                                <ThemedText style={styles.movieRating}>
+                                    {item.userRating ? `Your rating: ⭐ ${item.userRating}` : `System: ⭐ ${item.rating}`}
+                                </ThemedText>
                             </View>
                         )}
-                    />
-                )}
+                            ListEmptyComponent={() => (
+                                <ThemedText style={{textAlign: 'center', marginTop: 20}}>
+                                    You haven't watched any movies yet.
+                                </ThemedText>
+                            )}
+                        />
+                    )}
 
                 {/*Friends tab*/}
                 {activeTab === 'Friends' && (
