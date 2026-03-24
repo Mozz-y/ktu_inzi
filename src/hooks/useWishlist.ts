@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addToWishlist, getWishlist, removeFromWishlist } from '../Services/wishlist';
+import { addToWishlist, getWishlist, removeFromWishlist } from '../services/wishlist';
 import { Movie } from '../types/movie';
 
 export const useWishlist = () => {
