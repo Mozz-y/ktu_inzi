@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWishlist } from '@/hooks/useWishlist';
-import { useWatched } from '../hooks/useWatched';
+import type { Movie } from '@/types/movie';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchMoviesByCategory } from '../api/tmdb';
-import type { Movie } from '@/types/movie';
+import { useWatched } from '../hooks/useWatched';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -30,13 +30,14 @@ export default function HomeScreen() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); //Kai paspaudi ant filmu
     const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
-    const { add, remove, isInWishlist } = useWishlist();
+    const { wishlist, add, remove, isInWishlist } = useWishlist();
     const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
 
     const [category, setCategory] = useState('Trending');
 
     useEffect(() => {
+    if(category === 'Wishlist') return;
     const loadData = async () => {
         const data = await fetchMoviesByCategory(category);
         setMovies(data);
@@ -48,7 +49,7 @@ export default function HomeScreen() {
         {name: 'Trending', icon: 'trending-up'},
         {name: 'Recommended', icon: 'star'},
         {name: 'New Releases', icon: 'film'},
-        {name: 'Watch Later', icon: 'clock'},
+        {name: 'Wishlist', icon: 'heart'},
         {name: 'Popular', icon: 'thumbs-up'},
     ];
 
@@ -103,6 +104,7 @@ export default function HomeScreen() {
     const currentWatchedMovie = watchedMovies.find(m => String(m.id) === String(selectedMovie?.id));
     const isWatched = !!currentWatchedMovie;
 
+    const displayedMovies = category === 'Wishlist' ? wishlist : movies;
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -129,20 +131,26 @@ export default function HomeScreen() {
         <ThemedText type = "title" style = {styles.categoryTitle}>
         {category}
         </ThemedText>
-
-        {/* FILMU SARASAS */}
-        <FlatList
-            data = {movies}
-            numColumns = {2}
-            columnWrapperStyle={{justifyContent: 'space-between'}}
-            keyExtractor = {(item) => item.id.toString()}
-            renderItem={({item}) => (
-                <TouchableOpacity onPress={() => openMovie(item)}>
-                    <MovieCard movie = {item}/>
-                </TouchableOpacity>
-            )}
-        />
-
+        {category === 'Wishlist' && displayedMovies.length === 0 ? (
+        <View style={{ marginTop: 50, alignItems: 'center' }}>
+            <ThemedText style={{ fontSize: 18, opacity: 0.6 }}>
+                Start adding movies you want to watch!
+            </ThemedText>
+        </View>
+        ) : (
+            <FlatList
+                data={displayedMovies}
+                numColumns={2}
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => openMovie(item)}>
+                        <MovieCard movie={item} />
+                    </TouchableOpacity>
+                )}
+            />
+        )}
+        
         {/*Atidarome filmu info naujame langely paspaudus ant filmo*/}
         {selectedMovie && (
             <Animated.View
