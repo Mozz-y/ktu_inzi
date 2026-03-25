@@ -19,10 +19,10 @@ export const fetchMoviesByCategory = async (category: string) => {
     
     // Suformuojame objektus taip, kad jie tiktų HomeScreen (posterUrl ir t.t.)
     return data.results.map((m: any) => ({
-      id: m.id.toString(),
+      id: m.id,
       title: m.title,
       year: m.release_date?.split('-')[0] || 'N/A',
-      rating: m.vote_average.toFixed(1),
+      rating: m.vote_average,
       posterUrl: `https://image.tmdb.org/t/p/w500${m.poster_path}`,
       description: m.overview,
       genre: ['Movie'] // TMDB duoda ID, pradžiai palikim taip
@@ -42,10 +42,10 @@ export const searchMovies = async (query: string) => {
     const data = await response.json();
     
     return data.results.map((m: any) => ({
-      id: m.id.toString(),
+      id: m.id,
       title: m.title,
       year: m.release_date?.split('-')[0] || 'N/A',
-      rating: m.vote_average.toFixed(1),
+      rating: m.vote_average,
       posterUrl: `https://image.tmdb.org/t/p/w500${m.poster_path}`,
       description: m.overview,
       genre: ['Movie']

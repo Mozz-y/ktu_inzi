@@ -1,32 +1,44 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Movie } from '../types/movie';
+import { WishlistRepository } from '../repositories/wishlistRepository';
+import { MovieRepository, Movie } from '../repositories/movieRepository';
+import { UserService } from './user';
 
-const WISHLIST_KEY = 'wishlist';
+// Helper to get all wishlist movies
+const getAllWishlistMovies = async (): Promise<Movie[]> => {
+  const userId = UserService.getCurrentUserId();
+  const items = await WishlistRepository.getAll(userId);
+  const movies: Movie[] = [];
 
-//Gauti wishlist
+  for (const item of items) {
+    const movie = await MovieRepository.getById(item.movie_id);
+    if (movie) movies.push(movie);
+  }
+  return movies;
+};
+
+// Export functions exactly as before
 export const getWishlist = async (): Promise<Movie[]> => {
-    const data = await AsyncStorage.getItem(WISHLIST_KEY);
-    return data ? (JSON.parse(data) as Movie[]) : [];
+  return getAllWishlistMovies();
 };
 
-//Prideti filma
 export const addToWishlist = async (movie: Movie): Promise<Movie[]> => {
-    const wishlist = await getWishlist();
+  const userId = UserService.getCurrentUserId();
 
-    //tikrinam ar jau yra filmas wishlist'e
-    const exists = wishlist.find(item => item.id === movie.id);
-    if(exists) return wishlist;
+  // Ensure movie exists in movies table
+  const existing = await MovieRepository.getById(movie.id);
+  if (!existing) {
+    await MovieRepository.insert(movie);
+  }
 
-    const updated = [...wishlist, movie];
-    await AsyncStorage.setItem(WISHLIST_KEY, JSON.stringify(updated));
-    return updated;
+  const alreadyExists = await WishlistRepository.exists(movie.id, userId);
+  if (!alreadyExists) {
+    await WishlistRepository.add(movie.id, userId);
+  }
+  return getAllWishlistMovies();
 };
 
-//Pasalinti filma
 export const removeFromWishlist = async (movieId: string): Promise<Movie[]> => {
-    const wishlist = await getWishlist();
-
-    const updated = wishlist.filter(item => item.id !== movieId);
-    await AsyncStorage.setItem(WISHLIST_KEY, JSON.stringify(updated));
-    return updated;
+  const userId = UserService.getCurrentUserId();
+  const numericId = Number(movieId);
+  await WishlistRepository.remove(numericId, userId);
+  return getAllWishlistMovies();
 };

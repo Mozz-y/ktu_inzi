@@ -1,48 +1,55 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Movie, WatchedMovie } from '../types/movie';
+import { HistoryRepository } from '../repositories/historyRepository';
+import { RatingsRepository } from '../repositories/ratingsRepository';
+import { MovieRepository, Movie } from '../repositories/movieRepository';
+import { UserService } from './user';
 
-const WATCHED_STORAGE_KEY = '@watched_movies';
+export interface WatchedMovie extends Movie {
+  watchedAt: string;
+  userRating: number;
+}
 
 export const watchedService = {
-  // 1. Gauti visą sąrašą (SCRUM-103)
   async getWatchedMovies(): Promise<WatchedMovie[]> {
-    const jsonValue = await AsyncStorage.getItem(WATCHED_STORAGE_KEY);
-    return jsonValue != null ? JSON.parse(jsonValue) : [];
+    const userId = UserService.getCurrentUserId();
+    const historyItems = await HistoryRepository.getAll(userId);
+    const moviesWithRatings: WatchedMovie[] = [];
+
+    for (const item of historyItems) {
+      const movie = await MovieRepository.getById(item.movie_id);
+      if (movie) {
+        const rating = await RatingsRepository.getRating(item.movie_id, userId);
+        moviesWithRatings.push({
+          ...movie,
+          watchedAt: new Date(item.watched_at * 1000).toISOString(),
+          userRating: rating?.rating ?? 0,
+        });
+      }
+    }
+
+    moviesWithRatings.sort((a, b) => (b.userRating || 0) - (a.userRating || 0));
+    return moviesWithRatings;
   },
 
-  // 2. Pridėti filmą (SCRUM-99 & 102)
   async addMovie(movie: Movie): Promise<void> {
-    const currentList = await this.getWatchedMovies();
-    
-    // Tikrinam, ar jau yra sąraše
-    if (currentList.some(m => m.id === movie.id)) return;
-
-    const newMovie: WatchedMovie = {
-      ...movie,
-      watchedAt: new Date().toISOString(),
-      userRating: 0 // Pradžioje reitingas nulis
-    };
-
-    const newList = [...currentList, newMovie];
-    await AsyncStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(newList));
+    const userId = UserService.getCurrentUserId();
+    const existing = await MovieRepository.getById(movie.id);
+    if (!existing) {
+      await MovieRepository.insert(movie);
+    }
+    await HistoryRepository.add(movie.id, userId);
+    await RatingsRepository.setRating(movie.id, 0, userId);
   },
 
   async removeMovie(movieId: string): Promise<void> {
-    const currentList = await this.getWatchedMovies();
-    // Paliekame tik tuos filmus, kurių ID nesutampa su trinamo filmo ID
-    const newList = currentList.filter(m => String(m.id) !== String(movieId));
-    await AsyncStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(newList));
+    const userId = UserService.getCurrentUserId();
+    const numericId = Number(movieId);
+    await HistoryRepository.remove(numericId, userId);
+    await RatingsRepository.remove(numericId, userId);
   },
 
-  // 3. Atnaujinti reitingą (SCRUM-100)
   async updateRating(movieId: string, newUserRating: number): Promise<void> {
-    const currentList = await this.getWatchedMovies();
-    const newList = currentList.map(m => 
-      m.id === movieId ? { ...m, userRating: newUserRating } : m
-    );
-    // Surūšiuojam iškart pagal reitingą (SCRUM-100 Rank dalis)
-    newList.sort((a, b) => (b.userRating || 0) - (a.userRating || 0));
-    
-    await AsyncStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(newList));
-  }
+    const userId = UserService.getCurrentUserId();
+    const numericId = Number(movieId);
+    await RatingsRepository.setRating(numericId, newUserRating, userId);
+  },
 };

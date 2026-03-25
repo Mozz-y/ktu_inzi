@@ -1,5 +1,6 @@
 import { getDB } from '../database';
 import { runInitialMigration } from './initial';
+import { addUserSupport } from './002_add_user_support';
 
 interface Migration {
   version: number;
@@ -8,13 +9,12 @@ interface Migration {
 
 const migrations: Migration[] = [
   { version: 1, up: runInitialMigration },
-  // Future migrations go here with higher version numbers
+  { version: 2, up: addUserSupport },
 ];
 
 export const runMigrations = async (): Promise<void> => {
   const db = getDB();
 
-  // Ensure migrations table exists
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS migrations (
       version INTEGER PRIMARY KEY,
@@ -22,13 +22,11 @@ export const runMigrations = async (): Promise<void> => {
     );
   `);
 
-  // Get already applied versions
   const appliedRows = await db.getAllAsync<{ version: number }>(
     'SELECT version FROM migrations ORDER BY version;'
   );
   const appliedVersions = new Set(appliedRows.map(row => row.version));
 
-  // Run pending migrations
   for (const migration of migrations) {
     if (!appliedVersions.has(migration.version)) {
       console.log(`[Migration] Running version ${migration.version}...`);
