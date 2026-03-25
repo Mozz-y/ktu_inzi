@@ -12,6 +12,7 @@ export interface Movie {
 
 export const MovieRepository = {
   createTable: (): Promise<void> => {
+    // This is already handled by migration, but kept for completeness
     return getDB().execAsync(`
       CREATE TABLE IF NOT EXISTS movies (
         id INTEGER PRIMARY KEY NOT NULL,
@@ -41,5 +42,9 @@ export const MovieRepository = {
 
   getAll: (): Promise<Movie[]> => {
     return getDB().getAllAsync('SELECT * FROM movies;');
+  },
+
+  getById: (id: number): Promise<Movie | null> => {
+    return getDB().getFirstAsync<Movie>('SELECT * FROM movies WHERE id = ?;', [id]);
   },
 };
