@@ -7,3 +7,8 @@ export type Movie ={
     description: string;
     genre: string[];
 };
+
+export type WatchedMovie = Movie & {
+    watchedAt: string;
+    userRating: number;
+};
