@@ -1,20 +1,22 @@
-import * as Device from 'expo-device';
-import { Switch, ScrollView, View, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { mockMovies } from '@/mocks/movies';
-import { Feather } from '@expo/vector-icons';
 import { useWatched } from '@/hooks/useWatched';
-import { useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native'; 
+import { Feather } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import { useCallback, useState } from 'react';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Switch, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
     const [activeTab, setActiveTab] = useState<'AlreadySeen' | 'Friends' | 'Settings'>('AlreadySeen');
 
     const { movies, refreshMovies } = useWatched(); 
+
+    const [Username, onChangeUsername] = useState('Vardenis Pavardenis');
+    const [Description, onChangeDescription] = useState('ieskau darbo, parduodu audi');
+    const exampleImage = require ('@/assets/images/goat.jpg');
+    const [ProfileImage, setProfileImage] = useState(Image.resolveAssetSource(exampleImage).uri);
 
     useFocusEffect(
         useCallback(() => {
@@ -37,6 +39,21 @@ export default function ProfileScreen() {
         {id: 5, name: 'David', avatar: '@/assets/images/goat.jpg'},
     ]
 
+    const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: false, 
+      allowsMultipleSelection: false,
+      selectionLimit: 1,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+       setProfileImage(result.assets[0].uri);
+    } else {
+      alert('You did not select any image.');
+    }
+  };
   return (
     <ScrollView style={{flex: 1}}
         contentContainerStyle = {{alignItems: 'center', paddingHorizontal: 20, paddingBottom: 50}}
@@ -45,15 +62,35 @@ export default function ProfileScreen() {
 
         <SafeAreaView style = {styles.container}>
             {/* Profilio nuotrauka */}
-            <Image
-                source = {require('@/assets/images/goat.jpg')}
+            <Pressable onPress={pickImageAsync}>
+          <Image
+                source = {{uri: ProfileImage}}
                 style={styles.avatar}
             />
+        </Pressable>
 
             {/* Username */}
-            <ThemedText type="title" style = {styles.name}>
+            {/* <ThemedText type="title" style = {styles.name}>
                 John Doe
-            </ThemedText>
+            </ThemedText> */}
+
+             <TextInput
+          style={styles.name}
+          onChangeText={onChangeUsername}
+          value={Username}
+          
+        />
+
+        <View>
+        <ThemedText type="smallBold" style = {styles.label}>
+                About me
+            </ThemedText> 
+        <TextInput
+          style={styles.description}
+          onChangeText={onChangeDescription}
+          value={Description}
+        />
+        </View>
 
             {/* Stats */}
             <View style = {styles.grid}>
@@ -236,7 +273,24 @@ const styles = StyleSheet.create({
     },
     name:{
         color: 'black',
-        marginBottom: 30,
+        fontSize: 20,
+        marginBottom: 15,
+    },
+    description:{
+        color: 'blue',
+        marginBottom: 10,
+        fontStyle: 'italic',
+        borderRadius: 10, 
+        borderWidth: 1,
+        borderColor: 'red',
+        
+    },
+    label:{
+        color: 'black',
+        fontSize: 10,
+        margin: 1,
+        padding: 1,
+        alignSelf: 'flex-start',
     },
     settingRow:{
         flexDirection: 'row',
