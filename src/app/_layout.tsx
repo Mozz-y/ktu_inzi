@@ -4,8 +4,10 @@ import { ActivityIndicator, View, useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { ThemedText } from '@/components/themed-text';
 import { initDatabase } from '@/database/database';
 import { UserService } from '@/services/user';
+import { fetchGenres } from '@/api/tmdb';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,6 +19,7 @@ export default function TabLayout() {
       try {
         await initDatabase();
         await UserService.init();
+        await fetchGenres(); // Load genre mappings
         setIsReady(true);
       } catch (err) {
         console.error('Initialization failed:', err);
@@ -36,7 +39,16 @@ export default function TabLayout() {
   }
 
   if (error) {
-    console.warn('App running with initialization error:', error.message);
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+        <ThemedText style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>
+          Initialization Failed
+        </ThemedText>
+        <ThemedText style={{ textAlign: 'center', color: 'red' }}>
+          {error.message}
+        </ThemedText>
+      </View>
+    );
   }
 
   return (

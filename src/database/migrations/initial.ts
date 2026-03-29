@@ -14,7 +14,8 @@ export const runInitialMigration = async (): Promise<void> => {
       overview TEXT,
       poster_path TEXT,
       release_date TEXT,
-      vote_average REAL
+      vote_average REAL,
+      genres TEXT DEFAULT '[]'
     );
   `);
 
@@ -23,6 +24,7 @@ export const runInitialMigration = async (): Promise<void> => {
     CREATE TABLE IF NOT EXISTS wishlist (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       movie_id INTEGER NOT NULL,
+      user_id TEXT,
       added_at INTEGER DEFAULT (strftime('%s', 'now')),
       FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
     );
@@ -33,6 +35,7 @@ export const runInitialMigration = async (): Promise<void> => {
     CREATE TABLE IF NOT EXISTS ratings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       movie_id INTEGER NOT NULL,
+      user_id TEXT,
       rating REAL NOT NULL,
       timestamp INTEGER DEFAULT (strftime('%s', 'now')),
       FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
@@ -44,6 +47,7 @@ export const runInitialMigration = async (): Promise<void> => {
     CREATE TABLE IF NOT EXISTS history (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       movie_id INTEGER NOT NULL,
+      user_id TEXT,
       watched_at INTEGER DEFAULT (strftime('%s', 'now')),
       FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
     );

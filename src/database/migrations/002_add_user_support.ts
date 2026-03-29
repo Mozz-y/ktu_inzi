@@ -14,16 +14,29 @@ export const addUserSupport = async (): Promise<void> => {
     );
   `);
 
-  // Add user_id column to existing tables
-  await db.execAsync(`
-    ALTER TABLE wishlist ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
-  `);
+  // Add user_id column to existing tables (if they don't already have it)
+  // We wrap in a try-catch because the column might already exist from the initial migration
+  try {
+    await db.execAsync(`
+      ALTER TABLE wishlist ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
+    `);
+  } catch (err) {
+    // Column already exists, ignore error
+  }
 
-  await db.execAsync(`
-    ALTER TABLE ratings ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
-  `);
+  try {
+    await db.execAsync(`
+      ALTER TABLE ratings ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
+    `);
+  } catch (err) {
+    // Column already exists, ignore error
+  }
 
-  await db.execAsync(`
-    ALTER TABLE history ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
-  `);
+  try {
+    await db.execAsync(`
+      ALTER TABLE history ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE;
+    `);
+  } catch (err) {
+    // Column already exists, ignore error
+  }
 };

@@ -11,10 +11,11 @@ export interface Rating {
 
 export const RatingsRepository = {
   setRating: (movieId: number, rating: number, userId: string): Promise<SQLiteRunResult> => {
+    const timestamp = Math.floor(Date.now() / 1000);
     return getDB().runAsync(
       `INSERT OR REPLACE INTO ratings (movie_id, user_id, rating, timestamp)
-       VALUES (?, ?, ?, strftime('%s', 'now'));`,
-      [movieId, userId, rating]
+       VALUES (?, ?, ?, ?);`,
+      [movieId, userId, rating, timestamp]
     );
   },
 

@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { mockMovies } from '@/mocks/movies';
 import { Feather } from '@expo/vector-icons';
 import { useWatched } from '@/hooks/useWatched';
 import { useCallback } from 'react';
@@ -95,7 +94,7 @@ export default function ProfileScreen() {
                                 <ThemedText style={styles.movieTitle}>{item.title}</ThemedText>
                                 {/* Showing users rating if it exists */}
                                 <ThemedText style={styles.movieRating}>
-                                    {item.userRating ? `Your rating: ⭐ ${item.userRating}` : `System: ⭐ ${item.rating}`}
+                                    {item.userRating ? `Your rating: ⭐ ${item.userRating.toFixed(1)}` : `System: ⭐ ${item.rating.toFixed(1)}`}
                                 </ThemedText>
                             </View>
                         )}

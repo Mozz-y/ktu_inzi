@@ -1,6 +1,7 @@
 import { getDB } from '../database';
 import { runInitialMigration } from './initial';
 import { addUserSupport } from './002_add_user_support';
+import { addGenres } from './003_add_genres';
 
 interface Migration {
   version: number;
@@ -10,6 +11,7 @@ interface Migration {
 const migrations: Migration[] = [
   { version: 1, up: runInitialMigration },
   { version: 2, up: addUserSupport },
+  { version: 3, up: addGenres },
 ];
 
 export const runMigrations = async (): Promise<void> => {

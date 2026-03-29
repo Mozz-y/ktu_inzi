@@ -5,7 +5,7 @@ export type Movie ={
     rating: number;
     posterUrl: string;
     description: string;
-    genre: string[];
+    genre: (string | number)[]; // Can be genre names (string) or IDs (number) from API
 };
 
 export type WatchedMovie = Movie & {

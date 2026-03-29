@@ -17,7 +17,7 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchMoviesByCategory } from '../api/tmdb';
+import { fetchMoviesByCategory, getGenreNames } from '../api/tmdb';
 import { useWatched } from '../hooks/useWatched';
 
 const screenHeight = Dimensions.get('window').height;
@@ -166,11 +166,11 @@ export default function HomeScreen() {
                             </ThemedText>
 
                             <ThemedText style = {{marginTop:5}}>
-                                {selectedMovie.year} | {Array.isArray(selectedMovie.genre) ? selectedMovie.genre.join(', ') : selectedMovie.genre} | ⭐ {selectedMovie.rating}
+                                {selectedMovie.year} | {getGenreNames(selectedMovie.genre).join(', ') || 'N/A'} | ⭐ {selectedMovie.rating.toFixed(1)}
                             </ThemedText>
 
                             <ThemedText style = {{marginTop:10}}>
-                                {selectedMovie.description}
+                                {selectedMovie.description || 'No description available'}
                             </ThemedText>        
                         </ScrollView>
                     {/*Wishlist mygtukas*/}
@@ -184,14 +184,14 @@ export default function HomeScreen() {
                         </ThemedText>
                     </TouchableOpacity>
                     {/* "Mark as Watched" button */}
-                    <TouchableOpacity 
-                        style={[styles.wishlistButton, { backgroundColor: isWatched ? '#dc3545' : '#28a745', marginTop: 10 }]} 
+                    <TouchableOpacity
+                        style={[styles.wishlistButton, { backgroundColor: isWatched ? '#dc3545' : '#28a745', marginTop: 10 }]}
                         onPress={() => {
                             if (!selectedMovie) return;
                             if (isWatched) {
-                                removeMovie(String(selectedMovie.id)); 
+                                removeMovie(selectedMovie.id);
                             } else {
-                                addMovie(selectedMovie); 
+                                addMovie(selectedMovie);
                             }
                         }}
                     >
@@ -207,10 +207,10 @@ export default function HomeScreen() {
                             <View style={{ flexDirection: 'row', gap: 10 }}>
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <TouchableOpacity key={star} onPress={() => handleSetRating(star)}>
-                                        <Ionicons 
-                                            name={ (currentWatchedMovie.userRating || 0) >= star ? 'star' : 'star-outline' } 
-                                            size={30} 
-                                            color="#eab308" 
+                                        <Ionicons
+                                            name={ (currentWatchedMovie?.userRating || 0) >= star ? 'star' : 'star-outline' }
+                                            size={30}
+                                            color="#eab308"
                                         />
                                     </TouchableOpacity>
                                 ))}
@@ -233,7 +233,7 @@ function MovieCard({ movie }: { movie: Movie }) {
             <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
 
             <View style = {styles.rating}>
-               <ThemedText>⭐ {movie.rating}</ThemedText>
+               <ThemedText>⭐ {movie.rating.toFixed(1)}</ThemedText>
             </View>
 
             <ThemedText>{movie.title}</ThemedText>

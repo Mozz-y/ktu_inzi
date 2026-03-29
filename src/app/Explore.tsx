@@ -11,23 +11,33 @@ import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { Picker } from '@react-native-picker/picker';
-import { mockMovies } from '@/mocks/movies';
 import { Feather } from '@expo/vector-icons';
-import { searchMovies, fetchMoviesByCategory } from '../api/tmdb';
+import { searchMovies, fetchMoviesByCategory, fetchGenres, getGenreNames } from '../api/tmdb';
 import type { Movie } from '@/types/movie';
 
 
 export default function ExploreScreen(){
     const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
-    const [movies, setMovies] = useState<Movie[]>([]); 
+    const [movies, setMovies] = useState<Movie[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedGenre, setSelectedGenre] = useState('All Genres');
     const [selectedSorting, setSelectedSorting] = useState('Rating');
     const [showGenreModal, setShowGenreModal] = useState(false);
     const [showSortModal, setShowSortModal] = useState(false);
-    const genres = ["All Genres","Action","Drama","Comedy","Sci-Fi"];
+    const [genreIdMap, setGenreIdMap] = useState<{ [key: string]: number }>({});
+
+    const genres = ["All Genres","Action","Drama","Comedy","Sci-Fi","Adventure","Animation"];
     const sorting = ['Rating','Year','Title'];
+
+    useEffect(() => {
+        // Fetch genre mappings on mount
+        const loadGenres = async () => {
+            const genres = await fetchGenres();
+            setGenreIdMap(genres);
+        };
+        loadGenres();
+    }, []);
 
     useEffect(() => {
     const loadInitialOrSearch = async () => {
@@ -49,10 +59,12 @@ export default function ExploreScreen(){
 const filteredMovies = useMemo(() => {
     let result: Movie[] = [...movies];
 
-    // Žanrų filtravimas (kadangi tmdb.ts dabar negrąžina ID, filtruojame pagal pavadinimą arba paliekame ateičiai)
-    if (selectedGenre !== 'All Genres') {
-        // Kol kas TMDB žanrų integracija sudėtingesnė, tad šitą galime palikti tuščią 
-        // arba filtruoti jei tavo tmdb.ts pridėtum žanrų ID.
+    // Žanrų filtravimas pagal selected genre ID
+    if (selectedGenre !== 'All Genres' && genreIdMap[selectedGenre]) {
+        const genreId = genreIdMap[selectedGenre];
+        result = result.filter(movie =>
+            Array.isArray(movie.genre) && movie.genre.includes(genreId as any)
+        );
     }
 
     // RŪŠIAVIMAS (SVARBU: rating is now a number type)
@@ -65,7 +77,7 @@ const filteredMovies = useMemo(() => {
     }
 
     return result;
-}, [movies, selectedSorting]); // Išėmiau selectedGenre iš priklausomybių, jei jo nenaudojame
+}, [movies, selectedSorting, selectedGenre, genreIdMap]);
 
     return(
         <ThemedView style = {{flex: 1}}>
@@ -177,7 +189,7 @@ function MovieCard({ movie }: { movie: Movie }) {
             <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
 
             <View style = {styles.rating}>
-               <ThemedText style = {styles.movieText}>⭐ {movie.rating}</ThemedText>
+               <ThemedText style = {styles.movieText}>⭐ {movie.rating.toFixed(1)}</ThemedText>
             </View>
 
             <ThemedText style = {styles.movieText}>{movie.title}</ThemedText>

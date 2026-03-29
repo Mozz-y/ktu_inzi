@@ -19,13 +19,13 @@ export const useWishlist = () => {
         setWishlist(updated);
     };
 
-    const remove = async (id: string) => {
-        const updated = await removeFromWishlist(id);
+    const remove = async (movieId: number) => {
+        const updated = await removeFromWishlist(movieId.toString());
         setWishlist(updated);
     };
 
-    const isInWishlist = (id: string) => {
-        return wishlist.some(m => m.id === Number(id));
+    const isInWishlist = (movieId: number) => {
+        return wishlist.some(m => m.id === movieId);
     };
 
     return { wishlist, add, remove, isInWishlist };

@@ -20,13 +20,13 @@ export const useWatched = () => {
     await fetchMovies(); // Atnaujinam sąrašą ekrane
   };
 
-  const handleRemove = async (id: string) => {
-    await watchedService.removeMovie(id);
+  const handleRemove = async (movieId: number) => {
+    await watchedService.removeMovie(movieId.toString());
     await fetchMovies(); // Atnaujinam sąrašą
   };
 
-  const handleRate = async (id: string, rating: number) => {
-    await watchedService.updateRating(id, rating);
+  const handleRate = async (movieId: number, rating: number) => {
+    await watchedService.updateRating(movieId.toString(), rating);
     await fetchMovies();
   };
 

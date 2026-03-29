@@ -8,6 +8,7 @@ export interface Movie {
   poster_path?: string;
   release_date?: string;
   vote_average?: number;
+  genres?: string; // JSON string array of genre IDs
 }
 
 export const MovieRepository = {
@@ -20,15 +21,17 @@ export const MovieRepository = {
         overview TEXT,
         poster_path TEXT,
         release_date TEXT,
-        vote_average REAL
+        vote_average REAL,
+        genres TEXT DEFAULT '[]'
       );
     `);
   },
 
   insert: (movie: Movie): Promise<SQLiteRunResult> => {
+    const genres = movie.genres ? JSON.stringify(movie.genres) : '[]';
     return getDB().runAsync(
-      `INSERT OR REPLACE INTO movies (id, title, overview, poster_path, release_date, vote_average)
-       VALUES (?, ?, ?, ?, ?, ?);`,
+      `INSERT OR REPLACE INTO movies (id, title, overview, poster_path, release_date, vote_average, genres)
+       VALUES (?, ?, ?, ?, ?, ?, ?);`,
       [
         movie.id,
         movie.title,
@@ -36,6 +39,7 @@ export const MovieRepository = {
         movie.poster_path ?? null,
         movie.release_date ?? null,
         movie.vote_average ?? null,
+        genres,
       ]
     );
   },
