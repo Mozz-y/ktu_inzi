@@ -15,6 +15,7 @@ import {
     Platform,
     StyleSheet,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,6 +37,7 @@ export default function HomeScreen() {
 
     const [category, setCategory] = useState('Trending');
 
+    const [menuVisible, setMenuVisible] = useState(false);
     useEffect(() => {
     if(category === 'Wishlist') return;
     const loadData = async () => {
@@ -63,6 +65,7 @@ export default function HomeScreen() {
 
     {/*Menu atidarymas / uzdarymas*/}
   const openMenu = () => {
+        setMenuVisible (true)
       Animated.timing(drawerAnim,{
           toValue: 0, //Visiskai matomas
           duration: 300,
@@ -70,11 +73,14 @@ export default function HomeScreen() {
       }).start();
   }
   const closeMenu = () => {
+
       Animated.timing(drawerAnim,{
           toValue: -screenWidth,
           duration: 300,
           useNativeDriver: false,
+          
       }).start();
+      setMenuVisible (false)
   }
 
   const handleWishlistToggle = () => {
@@ -98,25 +104,40 @@ export default function HomeScreen() {
     const displayedMovies = category === 'Wishlist' ? wishlist : movies;
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+          <SafeAreaView style={styles.safeArea}>
 
-      {/* KATEGORIJU PASIRINKIMO MENU */}
-        <Header onMenuPress={openMenu}/>
-        <Animated.View style={[styles.menu, {left: drawerAnim }]}>
-            {menuItems.map(item => (
-                <TouchableOpacity
-                key = {item.name}
-                style = {styles.menuText}
-                onPress={() => {
-                    setCategory(item.name);
-                    closeMenu();
-                    }}
-                >
-                    <Feather name = {item.icon as any} size = {20} color = "#000" style = {styles.menuIcon}/>
-                    <ThemedText>{item.name}</ThemedText>
-                </TouchableOpacity>
-            ))}
-        </Animated.View>
+              {/* KATEGORIJU PASIRINKIMO MENU */}
+              <Header onMenuPress={openMenu} />
+              {menuVisible && (
+                  <TouchableWithoutFeedback onPress={closeMenu}>
+                      <View style={styles.overlay} />
+                  </TouchableWithoutFeedback>
+              )}
+
+      <TouchableWithoutFeedback
+          onPress={() => {
+              closeMenu();
+          } }
+      >
+
+              <Animated.View
+                  style={[styles.menu, { left: drawerAnim }]}>
+
+                  {menuItems.map(item => (
+                      <TouchableOpacity
+                          key={item.name}
+                          style={styles.menuText}
+                          onPress={() => {
+                              setCategory(item.name);
+                              closeMenu();
+                          } }
+                      >
+                          <Feather name={item.icon as any} size={20} color="#000" style={styles.menuIcon} />
+                          <ThemedText>{item.name}</ThemedText>
+                      </TouchableOpacity>
+                  ))}
+              </Animated.View>
+          </TouchableWithoutFeedback>
 
         {/* PAGRINDINIS HOME PAGE CONTENT */}
         <ThemedText type = "title" style = {styles.categoryTitle}>
@@ -175,6 +196,15 @@ const styles = StyleSheet.create({
     },
     container: {
       flex: 1,
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.3)', // optional tamsinimas
+        zIndex: 5,
     },
     menu:{
         paddingVertical: 60,
