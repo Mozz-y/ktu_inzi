@@ -28,7 +28,6 @@ export function MovieModal({
     userRating
 }: MovieModalProps) {
     const fadeAnim = useRef(new Animated.Value(0)).current;
-
     useEffect(() => {
         if (visible) {
             Animated.timing(fadeAnim, {
@@ -48,7 +47,7 @@ export function MovieModal({
     if (!movie || !visible) return null;
 
     return (
-        <Animated.View style={[styles.animatedModalBackground, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.animatedModalBackground, { opacity: fadeAnim, flex: 1 }]}>
             <TouchableOpacity style={styles.modalBackground} activeOpacity={1} onPress={onClose}>
                 <Animated.View style={styles.modalContent}>
                     <ScrollView>
@@ -115,8 +114,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        right: 0,
+        bottom: 0,
+        zIndex: 1000,
     },
     cardTitle: {
         marginVertical: 15,
@@ -128,6 +128,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
+        margin: 0,
+        padding: 0,
     },
     modalContent: {
         flex: 1,

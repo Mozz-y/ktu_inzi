@@ -163,27 +163,27 @@ export default function HomeScreen() {
             />
         )}
         
-        <MovieModal
-            movie={selectedMovie}
-            visible={!!selectedMovie}
-            onClose={closeMovie}
-            onWishlistToggle={handleWishlistToggle}
-            onMarkWatched={() => {
-                if (!selectedMovie) return;
-                if (isWatched) {
-                    removeMovie(String(selectedMovie.id));
-                } else {
-                    addMovie(selectedMovie);
-                }
-            }}
-            onRate={handleSetRating}
-            isInWishlist={selectedMovie ? isInWishlist(String(selectedMovie.id)) : false}
-            isWatched={isWatched}
-            userRating={currentWatchedMovie?.userRating}
-        />
-        
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>
+
+      <MovieModal
+        movie={selectedMovie}
+        visible={!!selectedMovie}
+        onClose={closeMovie}
+        onWishlistToggle={handleWishlistToggle}
+        onMarkWatched={() => {
+          if (!selectedMovie) return;
+          if (isWatched) {
+            removeMovie(String(selectedMovie.id));
+          } else {
+            addMovie(selectedMovie);
+          }
+        }}
+        onRate={handleSetRating}
+        isInWishlist={selectedMovie ? isInWishlist(String(selectedMovie.id)) : false}
+        isWatched={isWatched}
+        userRating={currentWatchedMovie?.userRating}
+      />
     </ThemedView>
   );
 }
