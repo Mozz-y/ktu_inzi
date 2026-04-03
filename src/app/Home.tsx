@@ -1,19 +1,21 @@
 import { Header } from '@/components/Header';
+import { MovieCard } from '@/components/MovieCard';
+import { MovieModal } from '@/components/MovieModal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Movie } from '@/types/movie';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
     Animated, Dimensions,
-    FlatList, Image,
+    FlatList,
     Platform,
-    ScrollView,
     StyleSheet,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,13 +31,13 @@ const cardWidth = (screenWidth - cardMargin * (numColumns+1)) / numColumns;
 export default function HomeScreen() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); //Kai paspaudi ant filmu
-    const fadeAnim = useRef(new Animated.Value(0)).current; //Pradzioje invisible
     const { wishlist, add, remove, isInWishlist } = useWishlist();
     const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
     const drawerAnim = useRef(new Animated.Value(-screenWidth)).current; //Pradzia uz ekrano
 
     const [category, setCategory] = useState('Trending');
 
+    const [menuVisible, setMenuVisible] = useState(false);
     useEffect(() => {
     if(category === 'Wishlist') return;
     const loadData = async () => {
@@ -56,22 +58,14 @@ export default function HomeScreen() {
     {/*Filmu card atidarymas/uzdarymas*/}
     const openMovie = (movie: Movie) => {
         setSelectedMovie(movie);
-        Animated.timing(fadeAnim,{
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-        }).start();
     };
     const closeMovie = () => {
-        Animated.timing(fadeAnim,{
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-        }).start(() => setSelectedMovie(null)); //Passibaigus animacijai, paslepiam
+        setSelectedMovie(null);
     };
 
     {/*Menu atidarymas / uzdarymas*/}
   const openMenu = () => {
+        setMenuVisible (true)
       Animated.timing(drawerAnim,{
           toValue: 0, //Visiskai matomas
           duration: 300,
@@ -79,17 +73,20 @@ export default function HomeScreen() {
       }).start();
   }
   const closeMenu = () => {
+
       Animated.timing(drawerAnim,{
           toValue: -screenWidth,
           duration: 300,
           useNativeDriver: false,
+          
       }).start();
+      setMenuVisible (false)
   }
 
   const handleWishlistToggle = () => {
     if (!selectedMovie) return;
-    if(isInWishlist(selectedMovie.id)){
-        remove(selectedMovie.id);
+    if(isInWishlist(String(selectedMovie.id))){
+        remove(String(selectedMovie.id));
     } else {
         add (selectedMovie);
     }
@@ -97,7 +94,7 @@ export default function HomeScreen() {
 
     const handleSetRating = (rating: number) => {
         if (selectedMovie) {
-            rateMovie(selectedMovie.id, rating);
+            rateMovie(String(selectedMovie.id), rating);
         }
     };
 
@@ -107,25 +104,40 @@ export default function HomeScreen() {
     const displayedMovies = category === 'Wishlist' ? wishlist : movies;
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+          <SafeAreaView style={styles.safeArea}>
 
-      {/* KATEGORIJU PASIRINKIMO MENU */}
-        <Header onMenuPress={openMenu}/>
-        <Animated.View style={[styles.menu, {left: drawerAnim }]}>
-            {menuItems.map(item => (
-                <TouchableOpacity
-                key = {item.name}
-                style = {styles.menuText}
-                onPress={() => {
-                    setCategory(item.name);
-                    closeMenu();
-                    }}
-                >
-                    <Feather name = {item.icon as any} size = {20} color = "#000" style = {styles.menuIcon}/>
-                    <ThemedText>{item.name}</ThemedText>
-                </TouchableOpacity>
-            ))}
-        </Animated.View>
+              {/* KATEGORIJU PASIRINKIMO MENU */}
+              <Header onMenuPress={openMenu} />
+              {menuVisible && (
+                  <TouchableWithoutFeedback onPress={closeMenu}>
+                      <View style={styles.overlay} />
+                  </TouchableWithoutFeedback>
+              )}
+
+      <TouchableWithoutFeedback
+          onPress={() => {
+              closeMenu();
+          } }
+      >
+
+              <Animated.View
+                  style={[styles.menu, { left: drawerAnim }]}>
+
+                  {menuItems.map(item => (
+                      <TouchableOpacity
+                          key={item.name}
+                          style={styles.menuText}
+                          onPress={() => {
+                              setCategory(item.name);
+                              closeMenu();
+                          } }
+                      >
+                          <Feather name={item.icon as any} size={20} color="#000" style={styles.menuIcon} />
+                          <ThemedText>{item.name}</ThemedText>
+                      </TouchableOpacity>
+                  ))}
+              </Animated.View>
+          </TouchableWithoutFeedback>
 
         {/* PAGRINDINIS HOME PAGE CONTENT */}
         <ThemedText type = "title" style = {styles.categoryTitle}>
@@ -151,6 +163,7 @@ export default function HomeScreen() {
             />
         )}
         
+<<<<<<< HEAD
         {/*Atidarome filmu info naujame langely paspaudus ant filmo*/}
         {selectedMovie && (
             <Animated.View
@@ -221,12 +234,34 @@ export default function HomeScreen() {
                 </TouchableOpacity>
             </Animated.View>
         )}
+=======
+>>>>>>> 1b6844aa2faacc0985c90c6e34bbc4a67d66bc1b
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>
+
+      <MovieModal
+        movie={selectedMovie}
+        visible={!!selectedMovie}
+        onClose={closeMovie}
+        onWishlistToggle={handleWishlistToggle}
+        onMarkWatched={() => {
+          if (!selectedMovie) return;
+          if (isWatched) {
+            removeMovie(String(selectedMovie.id));
+          } else {
+            addMovie(selectedMovie);
+          }
+        }}
+        onRate={handleSetRating}
+        isInWishlist={selectedMovie ? isInWishlist(String(selectedMovie.id)) : false}
+        isWatched={isWatched}
+        userRating={currentWatchedMovie?.userRating}
+      />
     </ThemedView>
   );
 }
 
+<<<<<<< HEAD
 function MovieCard({ movie }: { movie: Movie }) {
     return (
         <View style={styles.card}>
@@ -242,24 +277,9 @@ function MovieCard({ movie }: { movie: Movie }) {
     );
 }
 
+=======
+>>>>>>> 1b6844aa2faacc0985c90c6e34bbc4a67d66bc1b
 const styles = StyleSheet.create({
-    animatedModalBackground:{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-    },
-    card:{
-        width: cardWidth,
-        marginBottom: 10,
-        padding: 5,
-    },
-    cardTitle:{
-        marginVertical: 15,
-        fontSize: 25,
-        color: 'black',
-    },
     categoryTitle:{
         textAlign: 'right',
         alignSelf: 'flex-start',
@@ -268,25 +288,14 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
     },
-    modalBackground:{
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent:{
-        flex: 1,
-        width: '90%',
-        maxHeight: '80%',
-        backgroundColor: 'white',
-        justifyContent: 'space-between',
-        borderRadius: 15,
-        padding: 20,
-    },
-    modalPoster:{
-        width: '100%',
-        height: 300,
-        borderRadius: 15,
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.3)', // optional tamsinimas
+        zIndex: 5,
     },
     menu:{
         paddingVertical: 60,
@@ -312,17 +321,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontSize: 30,
     },
-    poster:{
-        width: '100%',
-        height: 200,
-        borderRadius: 15,
-        marginBottom: 5,
-    },
-    rating: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
     safeArea: {
         flex: 1, //Flex = 1 reiskia kad uzpildo visa likusia erdve
         paddingHorizontal: Spacing.one, //Prideda tarpa is kaires ir desines
@@ -330,19 +328,5 @@ const styles = StyleSheet.create({
         gap: Spacing.four,
         paddingBottom: -Spacing.four, //Jeigu 0 tai siek tiek bus tuscias tarpas tarp filmu ir navigation bar apacioj
         maxWidth: MaxContentWidth,
-    },
-    wishlistButton:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#e50914',
-        paddingVertical: 12,
-        borderRadius: 10,
-        marginTop: 10,
-        gap: 8,
-    },
-    wishlistText:{
-        color: 'white',
-        fontWeight: 'bold',
     },
 });
