@@ -1,10 +1,11 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { Platform, StyleSheet, Text, type StyleProp, type TextProps, type TextStyle } from 'react-native';
 
 import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
+export type ThemedTextProps = Omit<TextProps, 'style'> & {
+  style?: StyleProp<TextStyle>;
+  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'categoryTitle';
   themeColor?: ThemeColor;
 };
 
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
       color: "white",
     fontSize: 15,
     lineHeight: 30,
-    fontWeight: 450,
+    fontWeight: '400',
   },
   link: {
     lineHeight: 30,
