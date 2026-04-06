@@ -1,33 +1,29 @@
-import { SymbolView } from 'expo-symbols';
-import React, { useState, useMemo, useEffect } from 'react';
-import { Modal, View, TextInput, Platform, Pressable,
-    ScrollView, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
-import { ExternalLink } from '@/components/external-link';
+import { MovieCard } from '@/components/MovieCard';
+import { MovieModal } from '@/components/MovieModal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { Picker } from '@react-native-picker/picker';
-import { mockMovies } from '@/mocks/movies';
-import { Feather } from '@expo/vector-icons';
-import { searchMovies, fetchMoviesByCategory } from '../api/tmdb';
+import { Spacing } from '@/constants/theme';
+import { useWatched } from '@/hooks/useWatched';
+import { useWishlist } from '@/hooks/useWishlist';
 import type { Movie } from '@/types/movie';
-
+import { Feather } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, Modal, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { fetchMoviesByCategory, searchMovies } from '../api/tmdb';
 
 export default function ExploreScreen(){
-    const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
     const [movies, setMovies] = useState<Movie[]>([]); 
-    const [isLoading, setIsLoading] = useState(false);
     const [selectedGenre, setSelectedGenre] = useState('All Genres');
     const [selectedSorting, setSelectedSorting] = useState('Rating');
     const [showGenreModal, setShowGenreModal] = useState(false);
     const [showSortModal, setShowSortModal] = useState(false);
+    const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     const genres = ["All Genres","Action","Drama","Comedy","Sci-Fi"];
     const sorting = ['Rating','Year','Title'];
+    const { add, remove, isInWishlist } = useWishlist();
+    const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
 
     useEffect(() => {
     const loadInitialOrSearch = async () => {
@@ -156,7 +152,11 @@ const filteredMovies = useMemo(() => {
                     numColumns={2}
                     columnWrapperStyle={{ justifyContent: 'space-between' }}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <MovieCard movie={item} />}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => setSelectedMovie(item)}>
+                            <MovieCard movie={item} />
+                        </TouchableOpacity>
+                    )}
                     ListEmptyComponent={() => (
                     <View style={{ alignItems: 'center', marginTop: 100 }}>
                     <Feather name="search" size={50} color="#ccc" />
@@ -166,23 +166,38 @@ const filteredMovies = useMemo(() => {
                     </View>
                 )}
                 />
+
+                <MovieModal
+                    movie={selectedMovie}
+                    visible={!!selectedMovie}
+                    onClose={() => setSelectedMovie(null)}
+                    onWishlistToggle={() => {
+                        if (!selectedMovie) return;
+                        if (isInWishlist(String(selectedMovie.id))) {
+                            remove(String(selectedMovie.id));
+                        } else {
+                            add(selectedMovie);
+                        }
+                    }}
+                    onMarkWatched={() => {
+                        if (!selectedMovie) return;
+                        const isWatched = watchedMovies.some(m => String(m.id) === String(selectedMovie.id));
+                        if (isWatched) {
+                            removeMovie(String(selectedMovie.id));
+                        } else {
+                            addMovie(selectedMovie);
+                        }
+                    }}
+                    onRate={(rating) => {
+                        if (!selectedMovie) return;
+                        rateMovie(String(selectedMovie.id), rating);
+                    }}
+                    isInWishlist={selectedMovie ? isInWishlist(String(selectedMovie.id)) : false}
+                    isWatched={!!watchedMovies.find(m => String(m.id) === String(selectedMovie?.id))}
+                    userRating={watchedMovies.find(m => String(m.id) === String(selectedMovie?.id))?.userRating}
+                />
             </SafeAreaView>
         </ThemedView>
-    );
-}
-
-function MovieCard({ movie }: { movie: Movie }) {
-    return (
-        <View style={styles.card}>
-            <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
-
-            <View style = {styles.rating}>
-               <ThemedText style = {styles.movieText}>⭐ {movie.rating}</ThemedText>
-            </View>
-
-            <ThemedText style = {styles.movieText}>{movie.title}</ThemedText>
-            <ThemedText style = {styles.movieText}>{movie.year}</ThemedText>
-        </View>
     );
 }
 
