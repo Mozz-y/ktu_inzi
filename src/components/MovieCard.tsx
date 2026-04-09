@@ -14,7 +14,7 @@ interface MovieCardProps {
 
 export function MovieCard({ movie, userRating }: MovieCardProps) {
     const displayRating = userRating ?? movie.rating;
-    const ratingLabel = userRating ? `Your rating: ⭐ ${displayRating}` : `⭐ ${displayRating}`;
+    const ratingLabel = userRating ? `Your rating: ⭐ ${displayRating.toFixed(1)}` : `⭐ ${displayRating.toFixed(1)}`;
 
     return (
         <View style={styles.card}>

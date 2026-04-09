@@ -3,6 +3,7 @@ import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
 import { Animated, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { getGenreNames } from '../api/tmdb';
 
 interface MovieModalProps {
     movie: Movie | null;
@@ -58,7 +59,7 @@ export function MovieModal({
                         </ThemedText>
 
                         <ThemedText style={{ marginTop: 5 }}>
-                            {movie.year} | {Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre} | ⭐ {movie.rating}
+                            {movie.year} | {getGenreNames(movie.genre).join(', ')} | ⭐ {movie.rating.toFixed(1)}
                         </ThemedText>
 
                         <ThemedText style={{ marginTop: 10 }}>
