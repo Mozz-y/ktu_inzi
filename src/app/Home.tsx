@@ -85,8 +85,8 @@ export default function HomeScreen() {
 
   const handleWishlistToggle = () => {
     if (!selectedMovie) return;
-    if(isInWishlist(String(selectedMovie.id))){
-        remove(String(selectedMovie.id));
+    if(isInWishlist(selectedMovie.id)){
+        remove(selectedMovie.id);
     } else {
         add (selectedMovie);
     }
@@ -94,7 +94,7 @@ export default function HomeScreen() {
 
     const handleSetRating = (rating: number) => {
         if (selectedMovie) {
-            rateMovie(String(selectedMovie.id), rating);
+            rateMovie(selectedMovie.id, rating);
         }
     };
 
@@ -163,79 +163,6 @@ export default function HomeScreen() {
             />
         )}
         
-<<<<<<< HEAD
-        {/*Atidarome filmu info naujame langely paspaudus ant filmo*/}
-        {selectedMovie && (
-            <Animated.View
-               style = {[styles.animatedModalBackground,{opacity: fadeAnim},]}
-            >
-                <TouchableOpacity style = {styles.modalBackground} activeOpacity = {1} onPress = {closeMovie}>
-                    <Animated.View style = {styles.modalContent}>
-                        <ScrollView>
-                            <Image source = {{uri: selectedMovie.posterUrl}} style = {styles.modalPoster}/>
-                            
-                            <ThemedText style={styles.cardTitle}>
-                                {selectedMovie.title}
-                            </ThemedText>
-
-                            <ThemedText style = {{marginTop:5}}>
-                                {selectedMovie.year} | {getGenreNames(selectedMovie.genre).join(', ') || 'N/A'} | ⭐ {selectedMovie.rating.toFixed(1)}
-                            </ThemedText>
-
-                            <ThemedText style = {{marginTop:10}}>
-                                {selectedMovie.description || 'No description available'}
-                            </ThemedText>        
-                        </ScrollView>
-                    {/*Wishlist mygtukas*/}
-                    <TouchableOpacity style = {styles.wishlistButton} onPress = {handleWishlistToggle}>
-                        <Ionicons name = {isInWishlist(selectedMovie.id) ? 'heart' : 'heart-outline'}
-                        size = {24}
-                        color = "white"
-                        />
-                        <ThemedText style = {styles.wishlistText}>
-                            {isInWishlist(selectedMovie.id) ?  'Remove from Wishlist' : 'Add to Wishlist'}
-                        </ThemedText>
-                    </TouchableOpacity>
-                    {/* "Mark as Watched" button */}
-                    <TouchableOpacity
-                        style={[styles.wishlistButton, { backgroundColor: isWatched ? '#dc3545' : '#28a745', marginTop: 10 }]}
-                        onPress={() => {
-                            if (!selectedMovie) return;
-                            if (isWatched) {
-                                removeMovie(selectedMovie.id);
-                            } else {
-                                addMovie(selectedMovie);
-                            }
-                        }}
-                    >
-                        <Ionicons name={isWatched ? "close-circle-outline" : "checkmark-circle-outline"} size={24} color="white" />
-                        <ThemedText style={styles.wishlistText}>
-                            {isWatched ? 'Remove from Watched' : 'Mark as Watched'}
-                        </ThemedText>
-                    </TouchableOpacity>
-                    {/* Rating option is visible only when seen */}
-                    {isWatched && (
-                        <View style={{ marginVertical: 15, alignItems: 'center' }}>
-                            <ThemedText style={{ fontWeight: 'bold', marginBottom: 5 }}>Your Rating:</ThemedText>
-                            <View style={{ flexDirection: 'row', gap: 10 }}>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <TouchableOpacity key={star} onPress={() => handleSetRating(star)}>
-                                        <Ionicons
-                                            name={ (currentWatchedMovie?.userRating || 0) >= star ? 'star' : 'star-outline' }
-                                            size={30}
-                                            color="#eab308"
-                                        />
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
-                    )}
-                    </Animated.View>
-                </TouchableOpacity>
-            </Animated.View>
-        )}
-=======
->>>>>>> 1b6844aa2faacc0985c90c6e34bbc4a67d66bc1b
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>
 
@@ -247,13 +174,13 @@ export default function HomeScreen() {
         onMarkWatched={() => {
           if (!selectedMovie) return;
           if (isWatched) {
-            removeMovie(String(selectedMovie.id));
+            removeMovie(selectedMovie.id);
           } else {
             addMovie(selectedMovie);
           }
         }}
         onRate={handleSetRating}
-        isInWishlist={selectedMovie ? isInWishlist(String(selectedMovie.id)) : false}
+        isInWishlist={selectedMovie ? isInWishlist(selectedMovie.id) : false}
         isWatched={isWatched}
         userRating={currentWatchedMovie?.userRating}
       />
@@ -261,24 +188,6 @@ export default function HomeScreen() {
   );
 }
 
-<<<<<<< HEAD
-function MovieCard({ movie }: { movie: Movie }) {
-    return (
-        <View style={styles.card}>
-            <Image source = {{uri : movie.posterUrl }} style = {styles.poster} />
-
-            <View style = {styles.rating}>
-               <ThemedText>⭐ {movie.rating.toFixed(1)}</ThemedText>
-            </View>
-
-            <ThemedText>{movie.title}</ThemedText>
-            <ThemedText>{movie.year}</ThemedText>
-        </View>
-    );
-}
-
-=======
->>>>>>> 1b6844aa2faacc0985c90c6e34bbc4a67d66bc1b
 const styles = StyleSheet.create({
     categoryTitle:{
         textAlign: 'right',
