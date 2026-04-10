@@ -1,9 +1,9 @@
+import { ThemedText } from '@/components/themed-text';
+import { MaxContentWidth } from '@/constants/theme';
+import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ThemedText} from '@/components/themed-text';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { Feather } from '@expo/vector-icons';
 
 export function Header({ onMenuPress }: { onMenuPress: () => void }) {
     return(

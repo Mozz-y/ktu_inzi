@@ -1,8 +1,8 @@
 import { HistoryRepository } from '../repositories/historyRepository';
-import { RatingsRepository } from '../repositories/ratingsRepository';
 import { MovieRepository } from '../repositories/movieRepository';
-import { UserService } from './user';
+import { RatingsRepository } from '../repositories/ratingsRepository';
 import type { Movie as APIMovie } from '../types/movie';
+import { UserService } from './user';
 
 export interface WatchedMovie extends APIMovie {
   watchedAt: string;

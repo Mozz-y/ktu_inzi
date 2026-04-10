@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { Feather } from '@expo/vector-icons';
 import { useWatched } from '@/hooks/useWatched';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useState } from 'react';
@@ -10,7 +10,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
     const [activeTab, setActiveTab] = useState<'AlreadySeen' | 'Friends' | 'Settings'>('AlreadySeen');
-
     const { movies, refreshMovies } = useWatched(); 
 
     const [Username, onChangeUsername] = useState('Vardenis Pavardenis');
@@ -29,6 +28,7 @@ export default function ProfileScreen() {
     const avgRating = ratedMovies.length > 0 
         ? (ratedMovies.reduce((acc, m) => acc + (m.userRating || 0), 0) / ratedMovies.length).toFixed(1) 
         : '0';
+    const isSingleWatched = movies.length === 1;
 
     //Temporary data
     const friends = [
@@ -69,11 +69,6 @@ export default function ProfileScreen() {
             />
         </Pressable>
 
-            {/* Username */}
-            {/* <ThemedText type="title" style = {styles.name}>
-                John Doe
-            </ThemedText> */}
-
              <TextInput
           style={styles.name}
           onChangeText={onChangeUsername}
@@ -81,15 +76,13 @@ export default function ProfileScreen() {
           
         />
 
-        <View>
-        <ThemedText type="smallBold" style = {styles.label}>
-                About me
-            </ThemedText> 
-        <TextInput
-          style={styles.description}
-          onChangeText={onChangeDescription}
-          value={Description}
-        />
+        <View style={{width: '100%'}}>
+                    <ThemedText type="smallBold" style = {styles.label}>About me</ThemedText> 
+                    <TextInput
+                        style={styles.description}
+                        onChangeText={onChangeDescription}
+                        value={Description}
+                    />
         </View>
 
             {/* Stats */}
@@ -124,17 +117,25 @@ export default function ProfileScreen() {
                         scrollEnabled={false}
                         data={movies} 
                         numColumns={2}
-                        columnWrapperStyle={{justifyContent: 'space-between', marginBottom: 15}}
+                        columnWrapperStyle={isSingleWatched ? styles.singleMovieWrapper : styles.multiMovieWrapper}
                         keyExtractor={item => item.id.toString()}
                         renderItem={({ item }) => (
-                            <View style={styles.movieRow}>
-                                <Image source={{ uri: item.posterUrl }} style={styles.moviePoster} />
-                                <ThemedText style={styles.movieTitle}>{item.title}</ThemedText>
-                                {/* Showing users rating if it exists */}
-                                <ThemedText style={styles.movieRating}>
-                                    {item.userRating ? `Your rating: ⭐ ${item.userRating.toFixed(1)}` : `System: ⭐ ${item.rating.toFixed(1)}`}
-                                </ThemedText>
-                            </View>
+                            <View style={[styles.movieRow, isSingleWatched && styles.movieRowSingle]}>
+                                    <Image source={{ uri: item.posterUrl }} style={styles.moviePoster} />
+                                    <ThemedText style={styles.movieTitle} numberOfLines={2}>{item.title}</ThemedText>
+                                    
+                                    {/* Zvaigzdutes vietoje teksto */}
+                                    <View style={{flexDirection: 'row', marginTop: 4}}>
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <Ionicons 
+                                                key={star}
+                                                name={(item.userRating || 0) >= star ? "star" : "star-outline"} 
+                                                size={14} 
+                                                color="#eab308" 
+                                            />
+                                        ))}
+                                    </View>
+                                </View>
                         )}
                             ListEmptyComponent={() => (
                                 <ThemedText style={{textAlign: 'center', marginTop: 20}}>
@@ -235,6 +236,14 @@ const styles = StyleSheet.create({
         width: '48%',
         alignItems: 'center',
     },
+    singleMovieWrapper: {
+        justifyContent: 'center',
+        marginBottom: 15,
+    },
+    multiMovieWrapper: {
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
     genreChip:{
         backgroundColor: '#3a7bd5',
         paddingHorizontal: 12,
@@ -254,7 +263,7 @@ const styles = StyleSheet.create({
     },
     moviePoster:{
         width: '100%',
-        height: 200,
+        aspectRatio: 0.7,
         borderRadius: 15,
         marginBottom: 10,
     },
@@ -263,6 +272,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: 12,
         paddingHorizontal: 5,
+    },
+    movieRowSingle:{
+        width: '90%',
+        maxWidth: 320,
+        alignSelf: 'center',
     },
     movieRating:{
         fontWeight: '400',
@@ -359,3 +373,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
