@@ -1,5 +1,5 @@
-import { getDB } from '../database/database';
 import type { SQLiteRunResult } from 'expo-sqlite';
+import { getDB } from '../database/database';
 
 export interface Rating {
   id: number;
@@ -10,18 +10,27 @@ export interface Rating {
 }
 
 export const RatingsRepository = {
-  setRating: (movieId: number, rating: number, userId: string): Promise<SQLiteRunResult> => {
+  setRating: async (movieId: number, rating: number, userId: string): Promise<SQLiteRunResult> => {
     const timestamp = Math.floor(Date.now() / 1000);
-    return getDB().runAsync(
-      `INSERT OR REPLACE INTO ratings (movie_id, user_id, rating, timestamp)
-       VALUES (?, ?, ?, ?);`,
-      [movieId, userId, rating, timestamp]
+    const updateResult = await getDB().runAsync(
+      'UPDATE ratings SET rating = ?, timestamp = ? WHERE movie_id = ? AND user_id = ?;',
+      [rating, timestamp, movieId, userId]
     );
+
+    if (updateResult.changes === 0) {
+      return getDB().runAsync(
+        `INSERT INTO ratings (movie_id, user_id, rating, timestamp)
+         VALUES (?, ?, ?, ?);`,
+        [movieId, userId, rating, timestamp]
+      );
+    }
+
+    return updateResult;
   },
 
   getRating: (movieId: number, userId: string): Promise<Rating | null> => {
     return getDB().getFirstAsync<Rating>(
-      'SELECT * FROM ratings WHERE movie_id = ? AND user_id = ?;',
+      'SELECT * FROM ratings WHERE movie_id = ? AND user_id = ? ORDER BY timestamp DESC LIMIT 1;',
       [movieId, userId]
     );
   },

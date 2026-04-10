@@ -19,7 +19,7 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchMoviesByCategory, getGenreNames } from '../api/tmdb';
+import { fetchMoviesByCategory } from '../api/tmdb';
 import { useWatched } from '../hooks/useWatched';
 
 const screenHeight = Dimensions.get('window').height;
@@ -102,7 +102,8 @@ export default function HomeScreen() {
     const isWatched = !!currentWatchedMovie;
 
     const displayedMovies = category === 'Wishlist' ? wishlist : movies;
-  return (
+  
+    return (
     <ThemedView style={styles.container}>
           <SafeAreaView style={styles.safeArea}>
 

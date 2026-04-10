@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { watchedService } from '../services/watchedList';
-import { WatchedMovie, Movie } from '../types/movie';
+import { Movie, WatchedMovie } from '../types/movie';
 
 export const useWatched = () => {
   const [movies, setMovies] = useState<WatchedMovie[]>([]);
@@ -26,9 +26,25 @@ export const useWatched = () => {
   };
 
   const handleRate = async (movieId: number, rating: number) => {
+  // 1. Iškart atnaujiname vietinę būseną (state), kad vartotojas pamatytų pokytį
+  setMovies(prevMovies => 
+    prevMovies.map(m => 
+      // Svarbu: užtikriname, kad ID būtų lyginami teisingai (abu paverčiam į String)
+      String(m.id) === String(movieId) ? { ...m, userRating: rating } : m
+    )
+  );
+
+  try {
+    // 2. Siunčiame užklausą į duomenų bazę fone
     await watchedService.updateRating(movieId.toString(), rating);
-    await fetchMovies();
-  };
+    // 3. Papildomai galime persiuntį šviežius duomenis užtikrinimui
+    // await fetchMovies(); 
+  } catch (error) {
+    console.error("Nepavyko atnaujinti reitingo:", error);
+    // Jei įvyko klaida, būtų gerai vėl paleisti fetchMovies(), kad grįžtų seni duomenys
+    fetchMovies();
+  }
+};
 
   return { movies, addMovie: handleAdd, rateMovie: handleRate, removeMovie: handleRemove, refreshMovies: fetchMovies };
 };
