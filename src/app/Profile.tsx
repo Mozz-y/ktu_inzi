@@ -14,7 +14,7 @@ export default function ProfileScreen() {
 
     const [Username, onChangeUsername] = useState('Vardenis Pavardenis');
     const [Description, onChangeDescription] = useState('ieskau darbo, parduodu audi');
-    const exampleImage = require ('@/assets/images/goat.jpg');
+    const exampleImage = require ('@/assets/images/defaultprofile.jpg');
     const [ProfileImage, setProfileImage] = useState(Image.resolveAssetSource(exampleImage).uri);
 
     useFocusEffect(
@@ -32,11 +32,11 @@ export default function ProfileScreen() {
 
     //Temporary data
     const friends = [
-        {id: 1, name: 'Alice', avatar: '@/assets/images/goat.jpg'},
-        {id: 2, name: 'Bob', avatar: '@/assets/images/goat.jpg'},
-        {id: 3, name: 'Charlie', avatar: '@/assets/images/goat.jpg'},
-        {id: 4, name: 'Jeffrey', avatar: '@/assets/images/goat.jpg'},
-        {id: 5, name: 'David', avatar: '@/assets/images/goat.jpg'},
+        {id: 1, name: 'Alice', avatar: '@/assets/images/defaultprofile.jpg'},
+        {id: 2, name: 'Bob', avatar: '@/assets/images/defaultprofile.jpg'},
+        {id: 3, name: 'Charlie', avatar: '@/assets/images/defaultprofile.jpg'},
+        {id: 4, name: 'Jeffrey', avatar: '@/assets/images/defaultprofile.jpg'},
+        {id: 5, name: 'David', avatar: '@/assets/images/defaultprofile.jpg'},
     ]
 
     const pickImageAsync = async () => {
@@ -155,7 +155,7 @@ export default function ProfileScreen() {
                         columnWrapperStyle = {{justifyContent: 'space-between', marginBottom: 15}}
                         renderItem = {({item}) =>(
                             <View style = {styles.friendBox}>
-                                <Image source = {require('@/assets/images/goat.jpg')} style = {styles.friendAvatar}/>
+                                <Image source = {require('@/assets/images/defaultprofile.jpg')} style = {styles.friendAvatar}/>
                                 <ThemedText>{item.name}</ThemedText>
                             </View>
                         )}
