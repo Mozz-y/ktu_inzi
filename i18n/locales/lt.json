@@ -1,0 +1,93 @@
+{
+  "tabs": {
+    "home": "Pagrindinis",
+    "explore": "Naršyti",
+    "profile": "Profilis"
+  },
+  "header": {
+    "subtitle": "Atrask, vertink ir sek savo mėgstamus filmus"
+  },
+  "home": {
+    "categories": {
+      "trending": "Populiariausi",
+      "recommended": "Rekomenduojami",
+      "newReleases": "Naujausi",
+      "wishlist": "Noriu pažiūrėti",
+      "popular": "Populiarūs"
+    },
+    "emptyWishlist": "Pradėk pridėti filmus, kuriuos nori pažiūrėti!"
+  },
+  "explore": {
+    "title": "Filmų paieška",
+    "searchPlaceholder": "Ieškoti...",
+    "genres": {
+      "allGenres": "Visi žanrai",
+      "action": "Veiksmo",
+      "drama": "Drama",
+      "comedy": "Komedija",
+      "thriller": "Trileris",
+      "scienceFiction": "Mokslinė fantastika",
+      "animation": "Animacija",
+      "family": "Šeimai"
+    },
+    "sorting": {
+      "rating": "Reitingas",
+      "year": "Metai",
+      "title": "Pavadinimas"
+    },
+    "emptyResults": "Filmų nerasta. Bandyk kitą pavadinimą!"
+  },
+  "profile": {
+    "aboutMe": "Apie mane",
+    "stats": {
+      "moviesWatched": "Peržiūrėti filmai",
+      "moviesRated": "Įvertinti filmai",
+      "watchLater": "Peržiūrėti vėliau",
+      "avgRating": "Vid. įvertinimas"
+    },
+    "tabs": {
+      "alreadySeen": "Jau matyti",
+      "friends": "Draugai",
+      "settings": "Nustatymai"
+    },
+    "emptyWatched": "Dar nežiūrėjai nė vieno filmo.",
+    "settings": {
+      "title": "Nustatymai",
+      "nightMode": "Naktinis režimas",
+      "notifications": "Pranešimai",
+      "autoplayTrailers": "Automatiškai leisti anonsus",
+      "favoriteGenres": "Mėgstami žanrai",
+      "language": "Kalba",
+      "lithuanian": "Lietuvių",
+      "english": "Anglų"
+    },
+    "favoriteGenres": {
+      "action": "Veiksmo",
+      "drama": "Drama",
+      "comedy": "Komedija",
+      "sciFi": "Mokslinė fantastika"
+    },
+    "imagePickerCancelled": "Nepasirinkai jokio paveikslėlio.",
+    "defaultName": "Filmų mėgėjas",
+    "defaultBio": "Filmų sekimo profilio pavyzdys"
+  },
+  "movie": {
+    "description": "Aprašymas",
+    "showLess": "Rodyti mažiau",
+    "readMore": "Skaityti daugiau",
+    "removeFromWishlist": "Pašalinti iš norimų",
+    "addToWishlist": "Pridėti į norimų",
+    "removeFromWatched": "Pašalinti iš peržiūrėtų",
+    "markAsWatched": "Pažymėti kaip peržiūrėtą",
+    "yourRating": "Tavo įvertinimas:",
+    "yourRatingInline": "Tavo įvertinimas: ⭐ {{rating}}",
+    "imdb": "IMDB"
+  },
+  "errors": {
+    "initializationFailed": "Inicializacija nepavyko"
+  },
+  "common": {
+    "docs": "Dok.",
+    "tryEditing": "Bandyk redaguoti"
+  }
+}

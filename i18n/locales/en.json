@@ -1,0 +1,93 @@
+{
+  "tabs": {
+    "home": "Home",
+    "explore": "Explore",
+    "profile": "Profile"
+  },
+  "header": {
+    "subtitle": "Discover, rate, and track your favorite movies"
+  },
+  "home": {
+    "categories": {
+      "trending": "Trending",
+      "recommended": "Recommended",
+      "newReleases": "New Releases",
+      "wishlist": "Wishlist",
+      "popular": "Popular"
+    },
+    "emptyWishlist": "Start adding movies you want to watch!"
+  },
+  "explore": {
+    "title": "Search for Movies",
+    "searchPlaceholder": "Search...",
+    "genres": {
+      "allGenres": "All Genres",
+      "action": "Action",
+      "drama": "Drama",
+      "comedy": "Comedy",
+      "thriller": "Thriller",
+      "scienceFiction": "Science Fiction",
+      "animation": "Animation",
+      "family": "Family"
+    },
+    "sorting": {
+      "rating": "Rating",
+      "year": "Year",
+      "title": "Title"
+    },
+    "emptyResults": "No movies found. Try another title!"
+  },
+  "profile": {
+    "aboutMe": "About me",
+    "stats": {
+      "moviesWatched": "Movies Watched",
+      "moviesRated": "Movies Rated",
+      "watchLater": "Watch Later",
+      "avgRating": "Avg Rating"
+    },
+    "tabs": {
+      "alreadySeen": "Already Seen",
+      "friends": "Friends",
+      "settings": "Settings"
+    },
+    "emptyWatched": "You haven't watched any movies yet.",
+    "settings": {
+      "title": "Settings",
+      "nightMode": "Night Mode",
+      "notifications": "Notifications",
+      "autoplayTrailers": "Autoplay Trailers",
+      "favoriteGenres": "Favorite genres",
+      "language": "Language",
+      "lithuanian": "Lithuanian",
+      "english": "English"
+    },
+    "favoriteGenres": {
+      "action": "Action",
+      "drama": "Drama",
+      "comedy": "Comedy",
+      "sciFi": "Science Fiction"
+    },
+    "imagePickerCancelled": "You did not select any image.",
+    "defaultName": "Movie Fan",
+    "defaultBio": "A movie tracker profile"
+  },
+  "movie": {
+    "description": "Description",
+    "showLess": "Show less",
+    "readMore": "Read more",
+    "removeFromWishlist": "Remove from Wishlist",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWatched": "Remove from Watched",
+    "markAsWatched": "Mark as Watched",
+    "yourRating": "Your rating:",
+    "yourRatingInline": "Your rating: ⭐ {{rating}}",
+    "imdb": "IMDB"
+  },
+  "errors": {
+    "initializationFailed": "Initialization Failed"
+  },
+  "common": {
+    "docs": "Docs",
+    "tryEditing": "Try editing"
+  }
+}
