@@ -47,7 +47,7 @@ export const watchedService = {
       }
     }
 
-    moviesWithRatings.sort((a, b) => (b.userRating || 0) - (a.userRating || 0));
+    moviesWithRatings.sort((a, b) => b.userRating - a.userRating);
     return moviesWithRatings;
   },
 

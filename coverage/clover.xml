@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1776518469260" clover="3.2.0">
+  <project timestamp="1776518469260" name="All files">
+    <metrics statements="129" coveredstatements="129" conditionals="57" coveredconditionals="57" methods="29" coveredmethods="29" elements="215" coveredelements="215" complexity="0" loc="129" ncloc="129" packages="2" files="8" classes="8"/>
+    <package name="repositories">
+      <metrics statements="37" coveredstatements="37" conditionals="15" coveredconditionals="15" methods="17" coveredmethods="17"/>
+      <file name="historyRepository.ts" path="C:\Users\elvin\ktu_inzi\src\repositories\historyRepository.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+      </file>
+      <file name="movieRepository.ts" path="C:\Users\elvin\ktu_inzi\src\repositories\movieRepository.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="10" coveredconditionals="10" methods="4" coveredmethods="4"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="31" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+      </file>
+      <file name="ratingsRepository.ts" path="C:\Users\elvin\ktu_inzi\src\repositories\ratingsRepository.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="1" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="20" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+      </file>
+      <file name="userRepository.ts" path="C:\Users\elvin\ktu_inzi\src\repositories\userRepository.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+      </file>
+      <file name="wishlistRepository.ts" path="C:\Users\elvin\ktu_inzi\src\repositories\wishlistRepository.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="38" count="2" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="services">
+      <metrics statements="92" coveredstatements="92" conditionals="42" coveredconditionals="42" methods="12" coveredmethods="12"/>
+      <file name="user.ts" path="C:\Users\elvin\ktu_inzi\src\services\user.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="5" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="11" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="22" count="4" type="stmt"/>
+        <line num="29" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="39" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+      </file>
+      <file name="watchedList.ts" path="C:\Users\elvin\ktu_inzi\src\services\watchedList.ts">
+        <metrics statements="37" coveredstatements="37" conditionals="19" coveredconditionals="19" methods="5" coveredmethods="5"/>
+        <line num="1" count="16" type="stmt"/>
+        <line num="2" count="16" type="stmt"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="14" count="9" type="stmt"/>
+        <line num="15" count="9" type="stmt"/>
+        <line num="16" count="9" type="stmt"/>
+        <line num="18" count="9" type="stmt"/>
+        <line num="19" count="12" type="stmt"/>
+        <line num="20" count="12" type="cond" truecount="1" falsecount="0"/>
+        <line num="21" count="11" type="stmt"/>
+        <line num="23" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="11" type="stmt"/>
+        <line num="29" count="11" type="stmt"/>
+        <line num="30" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="35" count="11" type="stmt"/>
+        <line num="46" count="11" type="stmt"/>
+        <line num="50" count="9" type="stmt"/>
+        <line num="51" count="9" type="stmt"/>
+        <line num="55" count="5" type="stmt"/>
+        <line num="56" count="5" type="stmt"/>
+        <line num="57" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="61" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="65" count="4" type="stmt"/>
+        <line num="75" count="5" type="stmt"/>
+        <line num="76" count="5" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+      </file>
+      <file name="wishlist.ts" path="C:\Users\elvin\ktu_inzi\src\services\wishlist.ts">
+        <metrics statements="37" coveredstatements="37" conditionals="18" coveredconditionals="18" methods="4" coveredmethods="4"/>
+        <line num="1" count="10" type="stmt"/>
+        <line num="2" count="10" type="stmt"/>
+        <line num="3" count="10" type="stmt"/>
+        <line num="7" count="10" type="stmt"/>
+        <line num="8" count="10" type="stmt"/>
+        <line num="9" count="10" type="stmt"/>
+        <line num="10" count="10" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="13" count="10" type="stmt"/>
+        <line num="14" count="10" type="cond" truecount="1" falsecount="0"/>
+        <line num="16" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="9" type="stmt"/>
+        <line num="22" count="9" type="stmt"/>
+        <line num="23" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="28" count="9" type="stmt"/>
+        <line num="37" count="9" type="stmt"/>
+        <line num="40" count="10" type="stmt"/>
+        <line num="44" count="10" type="stmt"/>
+        <line num="45" count="5" type="stmt"/>
+        <line num="48" count="10" type="stmt"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="53" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="55" count="3" type="stmt"/>
+        <line num="56" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="71" count="4" type="stmt"/>
+        <line num="72" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="73" count="3" type="stmt"/>
+        <line num="75" count="4" type="stmt"/>
+        <line num="78" count="10" type="stmt"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
