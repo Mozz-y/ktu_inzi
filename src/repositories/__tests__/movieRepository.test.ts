@@ -59,6 +59,29 @@ describe('MovieRepository', () => {
     );
   });
 
+  it.each([
+    { genres: '[]', expected: '"[]"' },
+    { genres: undefined, expected: '[]' },
+    { genres: '[1,2,3]', expected: '"[1,2,3]"' },
+  ])('inserts a movie with genres $genres and stores as $expected', async ({ genres, expected }) => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    await MovieRepository.insert({
+      id: 101,
+      title: 'Param Test',
+      overview: 'Test',
+      poster_path: '/test.jpg',
+      release_date: '2026-01-01',
+      vote_average: 8.0,
+      genres,
+    });
+
+    expect(fakeDb.runAsync).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT OR REPLACE INTO movies'),
+      [101, 'Param Test', 'Test', '/test.jpg', '2026-01-01', 8.0, expected]
+    );
+  });
+
   it('inserts a movie with undefined genres as empty JSON array', async () => {
     fakeDb.runAsync.mockResolvedValue({ changes: 1 });
 

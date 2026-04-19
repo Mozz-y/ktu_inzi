@@ -38,6 +38,19 @@ describe('UserRepository', () => {
     expect(fakeDb.getFirstAsync).toHaveBeenCalledWith('SELECT * FROM users LIMIT 1;');
   });
 
+  it.each([
+    { user: { id: 'user-1', created_at: 1000 }, expected: { id: 'user-1', created_at: 1000 } },
+    { user: { id: 'user-2', created_at: 2000 }, expected: { id: 'user-2', created_at: 2000 } },
+    { user: null, expected: null },
+  ])('returns user $expected when getFirstAsync returns $user', async ({ user, expected }) => {
+    fakeDb.getFirstAsync.mockResolvedValue(user);
+
+    const result = await UserRepository.getCurrentUser();
+
+    expect(result).toEqual(expected);
+    expect(fakeDb.getFirstAsync).toHaveBeenCalledWith('SELECT * FROM users LIMIT 1;');
+  });
+
   it('returns null when no user exists', async () => {
     fakeDb.getFirstAsync.mockResolvedValue(undefined);
 

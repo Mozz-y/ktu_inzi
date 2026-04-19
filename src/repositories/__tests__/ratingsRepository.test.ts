@@ -66,6 +66,22 @@ describe('RatingsRepository', () => {
     );
   });
 
+  it.each([
+    { movieId: 5, userId: 'user-1', rating: { id: 1, movie_id: 5, user_id: 'user-1', rating: 5, timestamp: 1000 } },
+    { movieId: 10, userId: 'user-2', rating: { id: 2, movie_id: 10, user_id: 'user-2', rating: 4, timestamp: 2000 } },
+    { movieId: 15, userId: 'user-3', rating: null },
+  ])('retrieves rating for movie $movieId and user $userId', async ({ movieId, userId, rating }) => {
+    fakeDb.getFirstAsync.mockResolvedValue(rating);
+
+    const result = await RatingsRepository.getRating(movieId, userId);
+
+    expect(result).toEqual(rating);
+    expect(fakeDb.getFirstAsync).toHaveBeenCalledWith(
+      'SELECT * FROM ratings WHERE movie_id = ? AND user_id = ? ORDER BY timestamp DESC LIMIT 1;',
+      [movieId, userId]
+    );
+  });
+
   it('removes a rating', async () => {
     fakeDb.runAsync.mockResolvedValue({ changes: 1 });
 

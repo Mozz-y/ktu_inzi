@@ -1,6 +1,6 @@
-import { UserRepository, User } from '../repositories/userRepository';
+import { User, UserRepository } from '../repositories/userRepository';
 
-let currentUser: User | null = null;
+export let currentUser: User | null = null;
 
 export const UserService = {
   /**

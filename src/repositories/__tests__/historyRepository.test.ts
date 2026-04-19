@@ -36,6 +36,22 @@ describe('HistoryRepository', () => {
     );
   });
 
+  it.each([
+    { movieId: 42, userId: 'user-1' },
+    { movieId: 123, userId: 'user-2' },
+    { movieId: 999, userId: 'user-3' },
+  ])('adds a history item for movie $movieId and user $userId', async ({ movieId, userId }) => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    const result = await HistoryRepository.add(movieId, userId);
+
+    expect(result).toEqual({ changes: 1 });
+    expect(fakeDb.runAsync).toHaveBeenCalledWith(
+      'INSERT INTO history (movie_id, user_id) VALUES (?, ?);',
+      [movieId, userId]
+    );
+  });
+
   it('removes a history item', async () => {
     fakeDb.runAsync.mockResolvedValue({ changes: 1 });
 
@@ -45,6 +61,22 @@ describe('HistoryRepository', () => {
     expect(fakeDb.runAsync).toHaveBeenCalledWith(
       'DELETE FROM history WHERE movie_id = ? AND user_id = ?;',
       [42, 'user-1']
+    );
+  });
+
+  it.each([
+    { movieId: 42, userId: 'user-1' },
+    { movieId: 123, userId: 'user-2' },
+    { movieId: 999, userId: 'user-3' },
+  ])('removes a history item for movie $movieId and user $userId', async ({ movieId, userId }) => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    const result = await HistoryRepository.remove(movieId, userId);
+
+    expect(result).toEqual({ changes: 1 });
+    expect(fakeDb.runAsync).toHaveBeenCalledWith(
+      'DELETE FROM history WHERE movie_id = ? AND user_id = ?;',
+      [movieId, userId]
     );
   });
 

@@ -39,6 +39,22 @@ describe('WishlistRepository', () => {
     );
   });
 
+  it.each([
+    { movieId: 7, userId: 'user-1' },
+    { movieId: 123, userId: 'user-2' },
+    { movieId: 456, userId: 'user-3' },
+  ])('adds a wishlist item for movie $movieId and user $userId', async ({ movieId, userId }) => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    const result = await WishlistRepository.add(movieId, userId);
+
+    expect(result).toEqual({ changes: 1 });
+    expect(fakeDb.runAsync).toHaveBeenCalledWith(
+      'INSERT INTO wishlist (movie_id, user_id) VALUES (?, ?);',
+      [movieId, userId]
+    );
+  });
+
   it('removes a wishlist item', async () => {
     fakeDb.runAsync.mockResolvedValue({ changes: 1 });
 
@@ -48,6 +64,22 @@ describe('WishlistRepository', () => {
     expect(fakeDb.runAsync).toHaveBeenCalledWith(
       'DELETE FROM wishlist WHERE movie_id = ? AND user_id = ?;',
       [7, 'user-1']
+    );
+  });
+
+  it.each([
+    { movieId: 7, userId: 'user-1' },
+    { movieId: 123, userId: 'user-2' },
+    { movieId: 456, userId: 'user-3' },
+  ])('removes a wishlist item for movie $movieId and user $userId', async ({ movieId, userId }) => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    const result = await WishlistRepository.remove(movieId, userId);
+
+    expect(result).toEqual({ changes: 1 });
+    expect(fakeDb.runAsync).toHaveBeenCalledWith(
+      'DELETE FROM wishlist WHERE movie_id = ? AND user_id = ?;',
+      [movieId, userId]
     );
   });
 
