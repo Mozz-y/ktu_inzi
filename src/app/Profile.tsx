@@ -1,16 +1,20 @@
 import { ThemedText } from '@/components/themed-text';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWatched } from '@/hooks/useWatched';
+import type { Movie } from '@/types/movie';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useState } from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Switch, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MovieModal } from '../components/MovieModal';
 
 export default function ProfileScreen() {
     const [activeTab, setActiveTab] = useState<'AlreadySeen' | 'Friends' | 'Settings'>('AlreadySeen');
     const { movies, refreshMovies } = useWatched(); 
+
+    const [selectedMovie, setSelectedMovie] = useState<Movie & { userRating?: number; watchedAt?: string } | null>(null);
 
     const [Username, onChangeUsername] = useState('Vardenis Pavardenis');
     const [Description, onChangeDescription] = useState('ieskau darbo, parduodu audi');
@@ -55,136 +59,157 @@ export default function ProfileScreen() {
     }
   };
   return (
-    <ScrollView style={{flex: 1}}
-        contentContainerStyle = {{alignItems: 'center', paddingHorizontal: 20, paddingBottom: 50}}
-        showsVerticalScrollIndicator = {true}
-        >
+    <View style={{ flex: 1 }}>
+        <ScrollView style={{flex: 1}}
+            contentContainerStyle = {{alignItems: 'center', paddingHorizontal: 20, paddingBottom: 50}}
+            showsVerticalScrollIndicator = {true}
+            >
 
-        <SafeAreaView style = {styles.container}>
-            {/* Profilio nuotrauka */}
-            <Pressable onPress={pickImageAsync}>
-          <Image
-                source = {{uri: ProfileImage}}
-                style={styles.avatar}
+            <SafeAreaView style = {styles.container}>
+                {/* Profilio nuotrauka */}
+                <Pressable onPress={pickImageAsync}>
+            <Image
+                    source = {{uri: ProfileImage}}
+                    style={styles.avatar}
+                />
+            </Pressable>
+
+                <TextInput
+            style={styles.name}
+            onChangeText={onChangeUsername}
+            value={Username}
+            
             />
-        </Pressable>
 
-             <TextInput
-          style={styles.name}
-          onChangeText={onChangeUsername}
-          value={Username}
-          
-        />
-
-        <View style={{width: '100%'}}>
-                    <ThemedText type="smallBold" style = {styles.label}>About me</ThemedText> 
-                    <TextInput
-                        style={styles.description}
-                        onChangeText={onChangeDescription}
-                        value={Description}
-                    />
-        </View>
-
-            {/* Stats */}
-            <View style = {styles.grid}>
-                <StatBox icon="eye" label="Movies Watched" value={watchedCount} color="#22c55e"/>
-                <StatBox icon="star" label="Movies Rated" value={ratedMovies.length} color="#eab308"/>
-                <StatBox icon="clock" label="Watch Later" value="0" color="#3b82f6"/> 
-                <StatBox icon="star" label="Avg Rating" value={avgRating} color="#a855f7"/>
+            <View style={{width: '100%'}}>
+                        <ThemedText type="smallBold" style = {styles.label}>About me</ThemedText> 
+                        <TextInput
+                            style={styles.description}
+                            onChangeText={onChangeDescription}
+                            value={Description}
+                        />
             </View>
 
-            {/* Tabs tarp already seen, friends, settings */}
-            <View style = {styles.tabRow}>
-                {['AlreadySeen','Friends','Settings'].map(tab => (
-                    <TouchableOpacity
-                        key = {tab}
-                        style = {[styles.tabButton,activeTab === tab && styles.tabActive]}
-                        onPress={() => setActiveTab(tab as any)}>
+                {/* Stats */}
+                <View style = {styles.grid}>
+                    <StatBox icon="eye" label="Movies Watched" value={watchedCount} color="#22c55e"/>
+                    <StatBox icon="star" label="Movies Rated" value={ratedMovies.length} color="#eab308"/>
+                    <StatBox icon="clock" label="Watch Later" value="0" color="#3b82f6"/> 
+                    <StatBox icon="star" label="Avg Rating" value={avgRating} color="#a855f7"/>
+                </View>
 
-                        <ThemedText style = {activeTab === tab ? styles.tabTextActive : styles.tabText}>
-                            {tab === 'AlreadySeen' ? 'Already Seen' : tab}
-                        </ThemedText>
-                    </TouchableOpacity>
-                ))}
-            </View>
+                {/* Tabs tarp already seen, friends, settings */}
+                <View style = {styles.tabRow}>
+                    {['AlreadySeen','Friends','Settings'].map(tab => (
+                        <TouchableOpacity
+                            key = {tab}
+                            style = {[styles.tabButton,activeTab === tab && styles.tabActive]}
+                            onPress={() => setActiveTab(tab as any)}>
 
-            {/* Tab content */}
-            <View style = {{flex: 1, width: '100%'}}>
+                            <ThemedText style = {activeTab === tab ? styles.tabTextActive : styles.tabText}>
+                                {tab === 'AlreadySeen' ? 'Already Seen' : tab}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-                {/*Already seen tab*/}
-                {activeTab === 'AlreadySeen' && (
-                    <FlatList
-                        scrollEnabled={false}
-                        data={movies} 
-                        numColumns={2}
-                        columnWrapperStyle={isSingleWatched ? styles.singleMovieWrapper : styles.multiMovieWrapper}
-                        keyExtractor={item => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={[styles.movieRow, isSingleWatched && styles.movieRowSingle]}>
-                                    <Image source={{ uri: item.posterUrl }} style={styles.moviePoster} />
-                                    <ThemedText style={styles.movieTitle} numberOfLines={2}>{item.title}</ThemedText>
-                                    
-                                    {/* Zvaigzdutes vietoje teksto */}
-                                    <View style={{flexDirection: 'row', marginTop: 4}}>
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <Ionicons 
-                                                key={star}
-                                                name={(item.userRating || 0) >= star ? "star" : "star-outline"} 
-                                                size={14} 
-                                                color="#eab308" 
-                                            />
-                                        ))}
-                                    </View>
-                                </View>
+                {/* Tab content */}
+                <View style = {{flex: 1, width: '100%'}}>
+
+                    {/*Already seen tab*/}
+                    {activeTab === 'AlreadySeen' && (
+                        <FlatList
+                            scrollEnabled={false}
+                            data={movies} 
+                            numColumns={2}
+                            columnWrapperStyle={isSingleWatched ? styles.singleMovieWrapper : styles.multiMovieWrapper}
+                            keyExtractor={item => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity 
+                                    style={[styles.movieRow, isSingleWatched && styles.movieRowSingle]}
+                                    onPress={() => setSelectedMovie(item)} 
+                                >
+                                        <Image source={{ uri: item.posterUrl }} style={styles.moviePoster} />
+                                        <ThemedText style={styles.movieTitle} numberOfLines={2}>{item.title}</ThemedText>
+                                        
+                                        {/* Zvaigzdutes vietoje teksto */}
+                                        <View style={{flexDirection: 'row', marginTop: 4}}>
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <Ionicons 
+                                                    key={star}
+                                                    name={(item.userRating || 0) >= star ? "star" : "star-outline"} 
+                                                    size={14} 
+                                                    color="#eab308" 
+                                                />
+                                            ))}
+                                        </View>
+                                    </TouchableOpacity>
+                            )}
+                                ListEmptyComponent={() => (
+                                    <ThemedText style={{textAlign: 'center', marginTop: 20}}>
+                                        You haven't watched any movies yet.
+                                    </ThemedText>
+                                )}
+                            />
                         )}
-                            ListEmptyComponent={() => (
-                                <ThemedText style={{textAlign: 'center', marginTop: 20}}>
-                                    You haven't watched any movies yet.
-                                </ThemedText>
+
+                    {/*Friends tab*/}
+                    {activeTab === 'Friends' && (
+                        <FlatList
+                            scrollEnabled = {false}
+                            data = {friends}
+                            keyExtractor = {item => item.id.toString()}
+                            numColumns = {2}
+                            columnWrapperStyle = {{justifyContent: 'space-between', marginBottom: 15}}
+                            renderItem = {({item}) =>(
+                                <View style = {styles.friendBox}>
+                                    <Image source = {require('@/assets/images/defaultprofile.jpg')} style = {styles.friendAvatar}/>
+                                    <ThemedText>{item.name}</ThemedText>
+                                </View>
                             )}
                         />
                     )}
 
-                {/*Friends tab*/}
-                {activeTab === 'Friends' && (
-                    <FlatList
-                        scrollEnabled = {false}
-                        data = {friends}
-                        keyExtractor = {item => item.id.toString()}
-                        numColumns = {2}
-                        columnWrapperStyle = {{justifyContent: 'space-between', marginBottom: 15}}
-                        renderItem = {({item}) =>(
-                            <View style = {styles.friendBox}>
-                                <Image source = {require('@/assets/images/defaultprofile.jpg')} style = {styles.friendAvatar}/>
-                                <ThemedText>{item.name}</ThemedText>
+                    {/*Settings tab*/}
+                    {activeTab === 'Settings' && (
+                        <View style = {{padding: 10, backgroundColor: '#e0e0e0', borderRadius: 16,}}>
+                            {/*Settings*/}
+                            <ThemedText type = "title" style = {styles.title}>Settings</ThemedText>
+                            <SettingRow label = "Night Mode"/>
+                            <SettingRow label = "Notifications"/>
+                            <SettingRow label = "Autoplay Trailers"/>
+
+                            {/*Favorite genres*/}
+                            <ThemedText type = "title" style = {styles.title}>Favorite genres</ThemedText>
+                            <View style = {{flexDirection: 'row', flexWrap: 'nowrap', marginTop: 5}}>
+                                {['Action','Drama','Comedy','Sci-Fi'].map(g => (
+                                    <View key = {g} style = {styles.genreChip}>
+                                        <ThemedText style = {styles.genreText}>{g}</ThemedText>
+                                    </View>
+                                ))}
                             </View>
-                        )}
-                    />
-                )}
-
-                {/*Settings tab*/}
-                {activeTab === 'Settings' && (
-                    <View style = {{padding: 10, backgroundColor: '#e0e0e0', borderRadius: 16,}}>
-                        {/*Settings*/}
-                        <ThemedText type = "title" style = {styles.title}>Settings</ThemedText>
-                        <SettingRow label = "Night Mode"/>
-                        <SettingRow label = "Notifications"/>
-                        <SettingRow label = "Autoplay Trailers"/>
-
-                        {/*Favorite genres*/}
-                        <ThemedText type = "title" style = {styles.title}>Favorite genres</ThemedText>
-                        <View style = {{flexDirection: 'row', flexWrap: 'nowrap', marginTop: 5}}>
-                            {['Action','Drama','Comedy','Sci-Fi'].map(g => (
-                                <View key = {g} style = {styles.genreChip}>
-                                    <ThemedText style = {styles.genreText}>{g}</ThemedText>
-                                </View>
-                            ))}
                         </View>
-                    </View>
-                )}
-            </View>
-        </SafeAreaView>
-    </ScrollView>
+                    )}
+                </View>
+            </SafeAreaView>
+        </ScrollView>
+
+                <MovieModal
+                    movie={selectedMovie}
+                    visible={selectedMovie !== null}
+                    onClose={() => setSelectedMovie(null)}
+                    isWatched={true} // It's in the Already Seen list, so it's watched!
+                    userRating={selectedMovie?.userRating}
+                    
+                    // You can hook these up to your real API/functions later. 
+                    // For now, these dummy functions prevent the app from crashing.
+                    isInWishlist={false} 
+                    onWishlistToggle={() => console.log('Wishlist clicked')}
+                    onMarkWatched={() => console.log('Mark watched clicked')}
+                    onRate={(rating) => console.log('Rated:', rating)}
+                />
+
+      </View>  
   );
 }
 

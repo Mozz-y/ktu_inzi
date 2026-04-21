@@ -27,7 +27,13 @@ export const watchedService = {
         // Parse genres from stored JSON
         let genres: (string | number)[] = [];
         try {
-          genres = dbMovie.genres ? JSON.parse(dbMovie.genres) : [];
+          if (dbMovie.genres) {
+            // First parse takes off the repository's stringification
+            const firstParse = JSON.parse(dbMovie.genres);
+            
+            // If it's STILL a string (double stringified old data), parse it again!
+            genres = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
+          }
         } catch (e) {
           genres = [];
         }
@@ -69,7 +75,7 @@ export const watchedService = {
         poster_path: posterPath || undefined,
         release_date: movie.year,
         vote_average: movie.rating,
-        genres: JSON.stringify(movie.genre || []), // Store genres as JSON
+        genres: (movie.genre || []) as unknown as string,
       });
     }
     await HistoryRepository.add(movie.id, userId);
