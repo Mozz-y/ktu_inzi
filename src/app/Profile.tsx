@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWatched } from '@/hooks/useWatched';
+import { useWishlist } from '@/hooks/useWishlist';
 import type { Movie } from '@/types/movie';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,7 +13,8 @@ import { MovieModal } from '../components/MovieModal';
 
 export default function ProfileScreen() {
     const [activeTab, setActiveTab] = useState<'AlreadySeen' | 'Friends' | 'Settings'>('AlreadySeen');
-    const { movies, refreshMovies } = useWatched(); 
+    const { add, remove, isInWishlist } = useWishlist();
+    const { movies, refreshMovies, removeMovie, rateMovie , addMovie} = useWatched(); 
 
     const [selectedMovie, setSelectedMovie] = useState<Movie & { userRating?: number; watchedAt?: string } | null>(null);
 
@@ -58,6 +60,18 @@ export default function ProfileScreen() {
       alert('You did not select any image.');
     }
   };
+
+  const handleWishlistToggle = () => {
+    if (!selectedMovie) return;
+    if(isInWishlist(selectedMovie.id)){
+        remove(selectedMovie.id);
+    } else {
+        add(selectedMovie);
+    }
+};
+// Patikriname, ar pasirinktas filmas vis dar egzistuoja matytų filmų masyve
+const isCurrentlyWatched = selectedMovie ? movies.some(m => m.id === selectedMovie.id) : false;
+
   return (
     <View style={{ flex: 1 }}>
         <ScrollView style={{flex: 1}}
@@ -195,19 +209,34 @@ export default function ProfileScreen() {
         </ScrollView>
 
                 <MovieModal
-                    movie={selectedMovie}
-                    visible={selectedMovie !== null}
-                    onClose={() => setSelectedMovie(null)}
-                    isWatched={true} // It's in the Already Seen list, so it's watched!
-                    userRating={selectedMovie?.userRating}
-                    
-                    // You can hook these up to your real API/functions later. 
-                    // For now, these dummy functions prevent the app from crashing.
-                    isInWishlist={false} 
-                    onWishlistToggle={() => console.log('Wishlist clicked')}
-                    onMarkWatched={() => console.log('Mark watched clicked')}
-                    onRate={(rating) => console.log('Rated:', rating)}
-                />
+        movie={selectedMovie}
+        visible={selectedMovie !== null}
+        onClose={() => setSelectedMovie(null)}
+        isWatched={isCurrentlyWatched} 
+        userRating={selectedMovie?.userRating}
+        
+        isInWishlist={selectedMovie ? isInWishlist(selectedMovie.id) : false}
+        onWishlistToggle={handleWishlistToggle}
+
+        onMarkWatched={() => {
+          if (!selectedMovie) return;
+
+          if (isCurrentlyWatched) {
+            // Ištriname iš duomenų bazės, bet NEBEUŽDAROME modalo
+            removeMovie(selectedMovie.id);
+          } else {
+            // Leidžiame pridėti atgal, jei žmogus paspaudė netyčia
+            addMovie(selectedMovie);
+          }
+        }}
+        
+        onRate={(rating) => {
+          if (selectedMovie) {
+            rateMovie(selectedMovie.id, rating);
+            setSelectedMovie({ ...selectedMovie, userRating: rating });
+          }
+        }}
+      />
 
       </View>  
   );
