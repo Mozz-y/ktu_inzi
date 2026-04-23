@@ -2,8 +2,8 @@ import { ThemedText } from '@/components/themed-text';
 import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Image, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { getGenreNames } from '../api/tmdb';
+import { Alert, Animated, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { fetchMovieTrailer, getGenreNames } from '../api/tmdb';
 
 interface MovieModalProps {
     movie: Movie | null;
@@ -53,83 +53,104 @@ export function MovieModal({
         setDescriptionExpanded(false);
     }, [movie?.id, visible]);
 
+    const handleWatchTrailer = async () => {
+        if (!movie) return;
+        const key = await fetchMovieTrailer(movie.id);
+
+        if (key) {
+            Linking.openURL(`https://www.youtube.com/watch?v=${key}`);
+        } else {
+            Alert.alert("Not found", "Sorry, we couldn't find a trailer for this movie.");
+        }
+    };
+
     if (!movie || !visible) return null;
 
     return (
         <Animated.View style={[styles.animatedModalBackground, { opacity: fadeAnim }]}> 
-            <TouchableWithoutFeedback onPress={onClose}>
-                <View style={styles.modalBackground}>
-                    <TouchableWithoutFeedback>
-                        <Animated.View style={styles.modalContent}>
-                            <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
-                                <Image source={{ uri: movie.posterUrl }} style={styles.modalPoster} resizeMode="cover" />
+            <View style={styles.modalBackground}>
+                
+                {/* 1. NEMATOMAS FONAS - jį paspaudus modalas užsidaro. 
+                    Jis užima visą ekraną, bet guli PO modalo turiniu. */}
+                <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-                                <View style={styles.headerSection}>
-                                    <ThemedText style={styles.cardTitle} numberOfLines={2}>{movie.title}</ThemedText>
-                                    <ThemedText style={styles.subtitleText} numberOfLines={2}>
-                                        {movie.year} | {getGenreNames(movie.genre).join(', ')}
-                                    </ThemedText>
-                                    <ThemedText style={styles.subtitleText}>
-                                        ⭐ {movie.rating.toFixed(1)} IMDB
-                                    </ThemedText>
-                                </View>
+                {/* 2. MODALO TURINYS - visiškai atskirtas, niekas netrukdo slinkti */}
+                <Animated.View style={styles.modalContent}>
+                    <ScrollView 
+                        style={styles.scrollArea} 
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Image source={{ uri: movie.posterUrl }} style={styles.modalPoster} resizeMode="cover" />
 
-                                <TouchableOpacity
-                                    activeOpacity={0.8}
-                                    onPress={() => hasLongDescription && setDescriptionExpanded(prev => !prev)}
-                                    style={styles.section}
-                                >
-                                    <ThemedText style={styles.sectionTitle}>Description</ThemedText>
-                                    <ThemedText style={styles.descriptionText} numberOfLines={descriptionExpanded ? undefined : 4}>
-                                        {hasLongDescription && !descriptionExpanded ? `${descriptionPreview}...` : movie.description}
-                                    </ThemedText>
-                                    {hasLongDescription && (
-                                        <ThemedText style={styles.expandText}>
-                                            {descriptionExpanded ? 'Show less' : 'Read more'}
-                                        </ThemedText>
-                                    )}
-                                </TouchableOpacity>
-                            </ScrollView>
+                        <View style={styles.headerSection}>
+                            <ThemedText style={styles.cardTitle} numberOfLines={2}>{movie.title}</ThemedText>
+                            <ThemedText style={styles.subtitleText} numberOfLines={2}>
+                                {movie.year} | {getGenreNames(movie.genre).join(', ')}
+                            </ThemedText>
+                            <ThemedText style={styles.subtitleText}>
+                                ⭐ {movie.rating.toFixed(1)} IMDB
+                            </ThemedText>
+                        </View>
 
-                            <View style={styles.buttonSection}>
-                                <TouchableOpacity style={styles.wishlistButton} onPress={onWishlistToggle}>
-                                    <Ionicons name={isInWishlist ? 'heart' : 'heart-outline'} size={24} color="white" />
-                                    <ThemedText style={styles.wishlistText}>
-                                        {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                                    </ThemedText>
+                        {/* VEIKSMŲ SEKCIJA (Mygtukai) */}
+                        <View style={styles.actionsContainer}>
+                            <TouchableOpacity style={styles.trailerButton} onPress={handleWatchTrailer}>
+                                <Ionicons name="play" size={20} color="white" />
+                                <ThemedText style={styles.trailerButtonText}>Watch Trailer</ThemedText>
+                            </TouchableOpacity>
+
+                            <View style={styles.secondaryActionsRow}>
+                                <TouchableOpacity style={styles.iconAction} onPress={onWishlistToggle}>
+                                    <Ionicons name={isInWishlist ? 'heart' : 'heart-outline'} size={28} color={isInWishlist ? '#e50914' : '#333'} />
+                                    <ThemedText style={styles.iconActionText}>Wishlist</ThemedText>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    style={[styles.wishlistButton, styles.watchedButton]}
-                                    onPress={onMarkWatched}
-                                >
-                                    <Ionicons name={isWatched ? 'close-circle-outline' : 'checkmark-circle-outline'} size={24} color="white" />
-                                    <ThemedText style={styles.wishlistText}>
-                                        {isWatched ? 'Remove from Watched' : 'Mark as Watched'}
-                                    </ThemedText>
+                                <TouchableOpacity style={styles.iconAction} onPress={onMarkWatched}>
+                                    <Ionicons name={isWatched ? 'checkmark-circle' : 'checkmark-circle-outline'} size={28} color={isWatched ? '#28a745' : '#333'} />
+                                    <ThemedText style={styles.iconActionText}>Watched</ThemedText>
                                 </TouchableOpacity>
-
-                                {isWatched && (
-                                    <View style={styles.ratingRow}>
-                                        <ThemedText style={styles.ratingLabel}>Your Rating:</ThemedText>
-                                        <View style={styles.starsRow}>
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <TouchableOpacity key={star} onPress={() => onRate(star)} style={styles.starButton}>
-                                                    <Ionicons
-                                                        name={(userRating || 0) >= star ? 'star' : 'star-outline'}
-                                                        size={30}
-                                                        color="#eab308"
-                                                    />
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    </View>
-                                )}
                             </View>
-                        </Animated.View>
-                    </TouchableWithoutFeedback>
-                </View>
-            </TouchableWithoutFeedback>
+                        </View>
+
+                        {/* ŽVAIGŽDUTĖS */}
+                        {isWatched && (
+                            <View style={styles.ratingRow}>
+                                <ThemedText style={styles.ratingLabel}>Your Rating:</ThemedText>
+                                <View style={styles.starsRow}>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <TouchableOpacity key={star} onPress={() => onRate(star)} style={styles.starButton}>
+                                            <Ionicons
+                                                name={(userRating || 0) >= star ? 'star' : 'star-outline'}
+                                                size={30}
+                                                color="#eab308"
+                                            />
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </View>
+                        )}
+
+                        {/* APRAŠYMAS */}
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => hasLongDescription && setDescriptionExpanded(prev => !prev)}
+                            style={styles.section}
+                        >
+                            <ThemedText style={styles.sectionTitle}>Description</ThemedText>
+                            <ThemedText style={styles.descriptionText} numberOfLines={descriptionExpanded ? undefined : 4}>
+                                {hasLongDescription && !descriptionExpanded ? `${descriptionPreview}...` : movie.description}
+                            </ThemedText>
+                            {hasLongDescription && (
+                                <ThemedText style={styles.expandText}>
+                                    {descriptionExpanded ? 'Show less' : 'Read more'}
+                                </ThemedText>
+                            )}
+                        </TouchableOpacity>
+                    </ScrollView>
+                </Animated.View>
+
+            </View>
         </Animated.View>
     );
 }
@@ -158,6 +179,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         padding: 20,
         overflow: 'hidden',
+        elevation: 5, // Pridėtas lengvas šešėlis Android
+        shadowColor: '#000', // Šešėlis iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     scrollArea: {
         flex: 1,
@@ -188,6 +214,64 @@ const styles = StyleSheet.create({
         marginTop: 6,
         flexWrap: 'wrap',
     },
+    actionsContainer: {
+        marginBottom: 20,
+    },
+    trailerButton: {
+        backgroundColor: '#000',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderRadius: 8,
+        marginBottom: 16,
+    },
+    trailerButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginLeft: 8,
+    },
+    secondaryActionsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#f0f0f0',
+        paddingVertical: 12,
+        marginBottom: 10,
+    },
+    iconAction: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+    },
+    iconActionText: {
+        fontSize: 12,
+        color: '#555',
+        marginTop: 4,
+        fontWeight: '500',
+    },
+    ratingRow: {
+        marginBottom: 20,
+        alignItems: 'center',
+        backgroundColor: '#f8f9fa',
+        padding: 10,
+        borderRadius: 8,
+    },
+    ratingLabel: {
+        fontWeight: 'bold',
+        marginBottom: 8,
+        color: '#333',
+    },
+    starsRow: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    starButton: {
+        padding: 4,
+        marginHorizontal: 5,
+    },
     section: {
         marginBottom: 16,
     },
@@ -204,43 +288,5 @@ const styles = StyleSheet.create({
         marginTop: 8,
         color: '#2563eb',
         fontWeight: '600',
-    },
-    buttonSection: {
-        marginTop: 10,
-        paddingTop: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#f0f0f0',
-    },
-    wishlistButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#e50914',
-        paddingVertical: 12,
-        borderRadius: 10,
-    },
-    watchedButton: {
-        backgroundColor: '#28a745',
-        marginTop: 10,
-    },
-    ratingRow: {
-        marginTop: 10,
-        alignItems: 'center',
-    },
-    ratingLabel: {
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    starsRow: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    starButton: {
-        padding: 4,
-        marginHorizontal: 5,
-    },
-    wishlistText: {
-        color: 'white',
-        fontWeight: 'bold',
     },
 });
