@@ -65,6 +65,33 @@ export const fetchMoviesByCategory = async (category: string) => {
   }
 };
 
+export const fetchMovieTrailer = async (movieId: number): Promise<string | null> => {
+  try {
+    // Kreipiamės į TMDB /videos galinį tašką (endpoint)
+    const response = await fetch(
+      `${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`
+    );
+    const data = await response.json();
+
+    // Patikriname, ar gavome rezultatų
+    if (!data.results || data.results.length === 0) {
+      return null;
+    }
+
+    // Ieškome oficialaus YouTube treilerio
+    const trailer = data.results.find(
+      (video: any) => video.site === 'YouTube' && video.type === 'Trailer'
+    );
+
+    // Jei radome, grąžiname jo raktą (pvz., "6JnN1DmbqoU"), jei ne - null
+    return trailer ? trailer.key : null;
+    
+  } catch (error) {
+    console.error(`Error fetching trailer for movie ${movieId}:`, error);
+    return null;
+  }
+};
+
 export const searchMovies = async (query: string) => {
   if (!query) return []; // Jei nieko neįvedė, neieškome
 

@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         alignSelf: 'flex-start',
         marginLeft: 16,
+        color: '#000',
     },
     container: {
       flex: 1,
