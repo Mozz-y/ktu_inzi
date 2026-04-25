@@ -29,7 +29,7 @@ beforeEach(() => {
 
 describe('UserRepository', () => {
   it('returns current user when found', async () => {
-    const existingUser = { id: 'user-1', created_at: 1000 };
+    const existingUser = { id: 'user-1', created_at: 1000, theme_preference: 'dark' as const };
     fakeDb.getFirstAsync.mockResolvedValue(existingUser);
 
     const result = await UserRepository.getCurrentUser();
@@ -39,8 +39,14 @@ describe('UserRepository', () => {
   });
 
   it.each([
-    { user: { id: 'user-1', created_at: 1000 }, expected: { id: 'user-1', created_at: 1000 } },
-    { user: { id: 'user-2', created_at: 2000 }, expected: { id: 'user-2', created_at: 2000 } },
+    {
+      user: { id: 'user-1', created_at: 1000, theme_preference: 'light' as const },
+      expected: { id: 'user-1', created_at: 1000, theme_preference: 'light' as const },
+    },
+    {
+      user: { id: 'user-2', created_at: 2000, theme_preference: 'system' as const },
+      expected: { id: 'user-2', created_at: 2000, theme_preference: 'system' as const },
+    },
     { user: null, expected: null },
   ])('returns user $expected when getFirstAsync returns $user', async ({ user, expected }) => {
     fakeDb.getFirstAsync.mockResolvedValue(user);
@@ -64,7 +70,15 @@ describe('UserRepository', () => {
 
     const result = await UserRepository.createUser();
 
-    expect(result).toEqual({ id: 'mocked-uuid', created_at: expect.any(Number) });
+    expect(result).toEqual({ id: 'mocked-uuid', created_at: expect.any(Number), theme_preference: 'system' });
     expect(fakeDb.runAsync).toHaveBeenCalledWith('INSERT INTO users (id) VALUES (?);', ['mocked-uuid']);
+  });
+
+  it('updates the theme preference for the current user', async () => {
+    fakeDb.runAsync.mockResolvedValue({ changes: 1 });
+
+    await UserRepository.updateThemePreference('user-1', 'dark');
+
+    expect(fakeDb.runAsync).toHaveBeenCalledWith('UPDATE users SET theme_preference = ? WHERE id = ?;', ['dark', 'user-1']);
   });
 });

@@ -1,11 +1,11 @@
 import React from 'react';
-import { useColorScheme } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppColorScheme } from '@/hooks/use-app-color-scheme';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
+  const scheme = useAppColorScheme();
   const colors = Colors[scheme ?? 'light'];
 
   return (
@@ -13,8 +13,8 @@ export default function AppTabs() {
         screenOptions={{
             headerShown: false, //Jeigu true, atsiras tarpas tarp "BingeLog" ir ekrano virsaus
             tabBarActiveTintColor: colors.text,
-            tabBarInactiveTintColor: 'gray',
-            tabBarStyle: {backgroundColor: colors.background},
+            tabBarInactiveTintColor: colors.tabInactive,
+            tabBarStyle: { backgroundColor: colors.background, borderTopColor: colors.border },
         }}
       >
       <Tabs.Screen

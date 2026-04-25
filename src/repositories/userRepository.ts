@@ -1,9 +1,11 @@
 import { getDB } from '../database/database';
+import type { AppThemePreference } from '../constants/theme';
 import * as Crypto from 'expo-crypto';
 
 export interface User {
   id: string;
   created_at: number;
+  theme_preference: AppThemePreference;
 }
 
 export const UserRepository = {
@@ -18,6 +20,10 @@ export const UserRepository = {
     const id = Crypto.randomUUID();
     await getDB().runAsync('INSERT INTO users (id) VALUES (?);', [id]);
     // The created_at will be set by default in the database, so we can return the user object directly
-    return { id, created_at: Date.now() };
+    return { id, created_at: Date.now(), theme_preference: 'system' };
+  },
+
+  updateThemePreference: async (userId: string, themePreference: AppThemePreference): Promise<void> => {
+    await getDB().runAsync('UPDATE users SET theme_preference = ? WHERE id = ?;', [themePreference, userId]);
   },
 };

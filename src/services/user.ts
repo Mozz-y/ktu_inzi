@@ -1,3 +1,4 @@
+import type { AppThemePreference } from '@/constants/theme';
 import { User, UserRepository } from '../repositories/userRepository';
 
 export let currentUser: User | null = null;
@@ -40,5 +41,18 @@ export const UserService = {
       throw new Error('UserService not initialized. Call init() first.');
     }
     return currentUser;
+  },
+
+  getThemePreference: (): AppThemePreference => {
+    return UserService.getCurrentUser().theme_preference ?? 'system';
+  },
+
+  updateThemePreference: async (themePreference: AppThemePreference): Promise<void> => {
+    const user = UserService.getCurrentUser();
+    await UserRepository.updateThemePreference(user.id, themePreference);
+    currentUser = {
+      ...user,
+      theme_preference: themePreference,
+    };
   },
 };
