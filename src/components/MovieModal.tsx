@@ -1,10 +1,12 @@
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
+import { mockActors } from '@/mocks/actor';
 import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, FlatList, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { fetchMovieTrailer, getGenreNames } from '../api/tmdb';
+import { ActorCard } from './ActorCard';
 
 interface MovieModalProps {
   movie: Movie | null;
@@ -157,6 +159,21 @@ export function MovieModal({
                 </ThemedText>
               )}
             </TouchableOpacity>
+            <ThemedText style={[styles.sectionTitle, { color: theme.title }]}>Actors</ThemedText>
+            <FlatList
+                data={mockActors} horizontal = { true}
+                //numColumns={2}
+               // columnWrapperStyle={styles.listRow}
+                // keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  // <TouchableOpacity onPress={() => setSelectedMovie(item)}>
+                  //   <MovieCard movie={item} />
+                  // </TouchableOpacity>
+                  <ActorCard actor={item} />
+                )}
+
+                
+          />
           </ScrollView>
         </Animated.View>
       </View>
