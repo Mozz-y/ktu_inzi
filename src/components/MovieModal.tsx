@@ -1,12 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
-import { mockActors } from '@/mocks/actor';
 import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, FlatList, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { fetchMovieTrailer, getGenreNames } from '../api/tmdb';
-import { ActorCard } from './ActorCard';
+import { actorsByMovie, fetchMovieTrailer, getGenreNames } from '../api/tmdb';
+import { Actor, ActorCard } from './ActorCard';
 
 interface MovieModalProps {
   movie: Movie | null;
@@ -36,6 +35,7 @@ export function MovieModal({
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const descriptionPreview = movie?.description?.slice(0, 220) ?? '';
   const hasLongDescription = Boolean(movie?.description && movie.description.length > 220);
+  const [actors, setActors] = useState<Actor[]>([]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -49,6 +49,19 @@ export function MovieModal({
     setDescriptionExpanded(false);
   }, [movie?.id, visible]);
 
+   useEffect(   () => {
+     const loadActors = async () => {
+      if (!movie) return;
+      let actors = await actorsByMovie(movie.id);
+      setActors(actors);
+    }
+    const delayDebounceFn = setTimeout(loadActors, 0);
+    return () => clearTimeout(delayDebounceFn);
+    
+  });
+
+  
+  
   const handleWatchTrailer = async () => {
     if (!movie) return;
     const key = await fetchMovieTrailer(movie.id);
@@ -161,7 +174,7 @@ export function MovieModal({
             </TouchableOpacity>
             <ThemedText style={[styles.sectionTitle, { color: theme.title }]}>Actors</ThemedText>
             <FlatList
-                data={mockActors} horizontal = { true}
+                data={actors} horizontal = { true}
                 //numColumns={2}
                // columnWrapperStyle={styles.listRow}
                 // keyExtractor={(item) => item.id.toString()}

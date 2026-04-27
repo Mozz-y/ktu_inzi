@@ -63,6 +63,7 @@ export const fetchMoviesByCategory = async (category: string) => {
     console.error("Error:", error);
     return [];
   }
+
 };
 
 export const fetchMovieTrailer = async (movieId: number): Promise<string | null> => {
@@ -115,3 +116,18 @@ export const searchMovies = async (query: string) => {
     return [];
   }
 };
+
+export const actorsByMovie = async (movieId: number) => {
+
+  try {
+    const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}`;
+  const response = await fetch( url);
+    const data = await response.json();
+    return [];
+    
+  } catch (error) {
+    console.error("actorsByMovie error:", error);
+    return [];
+  }
+ 
+}
