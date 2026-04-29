@@ -34,6 +34,13 @@ export function MovieModal({
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const descriptionPreview = movie?.description?.slice(0, 220) ?? '';
   const hasLongDescription = Boolean(movie?.description && movie.description.length > 220);
+  const genreNames = getGenreNames(movie?.genre ?? []);
+  const genreText =
+    genreNames.length > 0
+      ? genreNames.join(', ')
+      : Array.isArray(movie?.genre)
+      ? movie.genre.filter(Boolean).join(', ')
+      : '';
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -81,7 +88,7 @@ export function MovieModal({
                 {movie.title}
               </ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.subtitleText} numberOfLines={2}>
-                {movie.year} | {getGenreNames(movie.genre).join(', ')}
+                {movie.year}{genreText ? ` | ${genreText}` : ''}
               </ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.subtitleText}>
                 {'\u2B50'} {movie.rating.toFixed(1)} IMDB

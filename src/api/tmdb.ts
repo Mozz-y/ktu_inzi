@@ -27,11 +27,29 @@ export const fetchGenres = async (): Promise<{ [key: string]: number }> => {
   }
 };
 
-// Helper to convert genre IDs to names
-export const getGenreNames = (genreIds: (string | number)[]): string[] => {
+// Helper to convert genre IDs or names to displayable genre names
+export const getGenreNames = (genreIds: unknown): string[] => {
+  if (!Array.isArray(genreIds)) {
+    return [];
+  }
+
   return genreIds
-    .map(id => genreNameMap[Number(id)])
-    .filter(name => name !== undefined);
+    .map((id) => {
+      if (typeof id === 'number') {
+        return genreNameMap[id];
+      }
+
+      if (typeof id === 'string') {
+        const maybeId = Number(id);
+        if (!Number.isNaN(maybeId) && genreNameMap[maybeId]) {
+          return genreNameMap[maybeId];
+        }
+        return id;
+      }
+
+      return undefined;
+    })
+    .filter((name): name is string => Boolean(name));
 };
 
 export const fetchMoviesByCategory = async (category: string) => {

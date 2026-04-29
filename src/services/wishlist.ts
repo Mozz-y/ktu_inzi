@@ -1,7 +1,7 @@
-import { WishlistRepository } from '../repositories/wishlistRepository';
 import { MovieRepository } from '../repositories/movieRepository';
-import { UserService } from './user';
+import { WishlistRepository } from '../repositories/wishlistRepository';
 import type { Movie as APIMovie } from '../types/movie';
+import { UserService } from './user';
 
 // Helper to get all wishlist movies
 const getAllWishlistMovies = async (): Promise<APIMovie[]> => {
@@ -17,10 +17,13 @@ const getAllWishlistMovies = async (): Promise<APIMovie[]> => {
         ? `https://image.tmdb.org/t/p/w500${dbMovie.poster_path}`
         : 'https://image.tmdb.org/t/p/w500/default.jpg';
 
-      // Parse genres from stored JSON
+      // Parse genres from stored JSON and support legacy double-encoded values
       let genres: (string | number)[] = [];
       try {
-        genres = dbMovie.genres ? JSON.parse(dbMovie.genres) : [];
+        if (dbMovie.genres) {
+          const firstParse = JSON.parse(dbMovie.genres);
+          genres = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
+        }
       } catch (e) {
         genres = [];
       }
@@ -32,7 +35,7 @@ const getAllWishlistMovies = async (): Promise<APIMovie[]> => {
         rating: dbMovie.vote_average || 0,
         posterUrl: posterUrl,
         description: dbMovie.overview || '',
-        genre: genres,
+        genre: Array.isArray(genres) ? genres : [],
       };
       movies.push(apiMovie);
     }
@@ -64,7 +67,7 @@ export const addToWishlist = async (movie: APIMovie): Promise<APIMovie[]> => {
       poster_path: posterPath || undefined,
       release_date: movie.year,
       vote_average: movie.rating,
-      genres: JSON.stringify(movie.genre || []), // Store genres as JSON
+      genres: movie.genre || [],
     });
   }
 
