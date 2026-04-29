@@ -81,6 +81,7 @@ export const fetchMoviesByCategory = async (category: string) => {
     console.error("Error:", error);
     return [];
   }
+
 };
 
 export const fetchMovieTrailer = async (movieId: number): Promise<string | null> => {
@@ -130,6 +131,94 @@ export const searchMovies = async (query: string) => {
     }));
   } catch (error) {
     console.error("Search error:", error);
+    return [];
+  }
+};
+
+export const searchMoviesByActor = async (actorName: string) => {
+  if (!actorName) return [];
+
+  try {
+    // 1. Pirmiausia ieškome aktoriaus/personos
+    const personResponse = await fetch(
+      `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(actorName)}&language=en-US`
+    );
+    const personData = await personResponse.json();
+    
+    if (personData.results.length === 0) return [];
+    
+    // 2. Paimame pirmą rastą aktorių
+    const actorId = personData.results[0].id;
+    
+    // 3. Gauname filmus, kuriuose vaidino šis aktorius
+    const moviesResponse = await fetch(
+      `${BASE_URL}/person/${actorId}/movie_credits?api_key=${API_KEY}&language=en-US`
+    );
+    const moviesData = await moviesResponse.json();
+    
+    // 4. Filtruojame ir formatuojame filmus (cast, ne crew)
+    return moviesData.cast
+      .filter((m: any) => m.poster_path) // Tik su plakatais
+      .map((m: any) => ({
+        id: m.id,
+        title: m.title,
+        year: m.release_date?.split('-')[0] || 'N/A',
+        rating: m.vote_average,
+        posterUrl: `https://image.tmdb.org/t/p/w500${m.poster_path}`,
+        description: m.overview,
+        genre: m.genre_ids || [],
+        character: m.character // Ką vaidino
+      }));
+  } catch (error) {
+    console.error("Actor search error:", error);
+    return [];
+  }
+};
+
+// Pridėkite šią funkciją prie esamų API funkcijų
+export const fetchActorDetails = async (actorId: number) => {
+  try {
+    const url = `${BASE_URL}/person/${actorId}?api_key=${API_KEY}&language=en-US`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return {
+      id: data.id,
+      name: data.name,
+      surname: "", // galima palikti tuščią arba padalinti name
+      imageUrl: data.profile_path 
+        ? `https://image.tmdb.org/t/p/w500${data.profile_path}`
+        : "https://via.placeholder.com/500x750?text=No+Image",
+      biography: data.biography || "No biography available.",
+      birthday: data.birthday || "Unknown",
+      placeOfBirth: data.place_of_birth || "Unknown",
+      popularity: data.popularity,
+    };
+  } catch (error) {
+    console.error("fetchActorDetails error:", error);
+    return null;
+  }
+};
+
+// Pataisykite actorsByMovie, kad grąžintų daugiau informacijos
+export const actorsByMovie = async (movieId: number) => {
+  try {
+    const url = `${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return (data.cast || []).slice(0, 10).map((actor: any) => ({
+      id: actor.id,
+      name: actor.name.split(" ")[0] || "",
+      surname: actor.name.split(" ").slice(1).join(" ") || "",
+      imageUrl: actor.profile_path 
+        ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
+        : "https://via.placeholder.com/200x300?text=No+Image",
+      character: actor.character,
+      popularity: actor.popularity,
+    }));
+  } catch (error) {
+    console.error("actorsByMovie error:", error);
     return [];
   }
 };

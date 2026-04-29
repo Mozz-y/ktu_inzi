@@ -1,11 +1,17 @@
-import { ThemedText } from '@/components/themed-text';
+ import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { fetchMovieTrailer, getGenreNames } from '../api/tmdb';
+import { Alert, Animated, FlatList, Image, Linking, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { actorsByMovie, fetchMovieTrailer, getGenreNames } from '../api/tmdb';
+import { Actor, ActorCard } from './ActorCard';
 
+ import { fetchActorDetails } from '../api/tmdb';
+
+
+
+  
 interface MovieModalProps {
   movie: Movie | null;
   visible: boolean;
@@ -34,6 +40,22 @@ export function MovieModal({
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const descriptionPreview = movie?.description?.slice(0, 220) ?? '';
   const hasLongDescription = Boolean(movie?.description && movie.description.length > 220);
+  const [actors, setActors] = useState<Actor[]>([]);
+
+  // Pridėkite šias būsenas
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
+  const [actorDetails, setActorDetails] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // Funkcija kai paspaudžiamas aktorius
+  const handleActorPress = async (actor: Actor) => {
+    setSelectedActor(actor);
+    setModalVisible(true);
+    
+    // Užkrauname detalesnę informaciją
+    const details = await fetchActorDetails(actor.id);
+    setActorDetails(details);
+  };
   const genreNames = getGenreNames(movie?.genre ?? []);
   const genreText =
     genreNames.length > 0
@@ -50,10 +72,27 @@ export function MovieModal({
     }).start();
   }, [visible, fadeAnim]);
 
-  useEffect(() => {
-    setDescriptionExpanded(false);
-  }, [movie?.id, visible]);
 
+    useEffect(() => {
+    setDescriptionExpanded(false);
+    }, [movie?.id, visible]);
+
+    useEffect(() => {
+      const loadActors = async () => {
+        if (!movie) return;
+        try {
+          const actors = await actorsByMovie(movie.id);
+          setActors(actors);
+        } catch (error) {
+          console.error('Klaida kraunant aktorius:', error);
+          setActors([]);
+        }
+      };
+    
+      loadActors();
+    }, [movie?.id]); // Priklauso tik nuo movie.id
+  
+  
   const handleWatchTrailer = async () => {
     if (!movie) return;
     const key = await fetchMovieTrailer(movie.id);
@@ -164,12 +203,29 @@ export function MovieModal({
                 </ThemedText>
               )}
             </TouchableOpacity>
+            <ThemedText style={[styles.sectionTitle, { color: theme.title }]}>Actors</ThemedText>
+            {}
+              <FlatList
+              data={actors}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <ActorCard actor={item} onPress={handleActorPress} />
+              )}
+              ListEmptyComponent={
+                <ThemedText style={{ padding: 20 }}>No actors found</ThemedText>
+              }
+              />
           </ScrollView>
         </Animated.View>
       </View>
     </Animated.View>
   );
+  {/* Pridėkite modalą komponento gale */}
+  
 }
+
 
 const styles = StyleSheet.create({
   actionsContainer: {
@@ -293,3 +349,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+// MovieModal.tsx - pridėkite šiuos pakeitimus

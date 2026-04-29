@@ -8,9 +8,11 @@ import { useWishlist } from '@/hooks/useWishlist';
 import type { Movie } from '@/types/movie';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Modal, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, StyleSheet, Switch, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchGenres, fetchMoviesByCategory, searchMovies } from '../api/tmdb';
+import { fetchGenres, fetchMoviesByCategory, searchMovies, searchMoviesByActor } from '../api/tmdb';
+
+
 
 export default function ExploreScreen() {
   const theme = useTheme();
@@ -27,6 +29,10 @@ export default function ExploreScreen() {
   const { add, remove, isInWishlist } = useWishlist();
   const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
 
+  const [searchByActor, setSearchByActor] = useState(false);
+  const toggleSwitch = () => setSearchByActor(previousState => !previousState);
+
+
   useEffect(() => {
     const loadGenres = async () => {
       const loadedGenres = await fetchGenres();
@@ -39,8 +45,15 @@ export default function ExploreScreen() {
   useEffect(() => {
     const loadInitialOrSearch = async () => {
       if (search.length > 2) {
-        const results = await searchMovies(search);
+        if (searchByActor) {
+          const results = await searchMoviesByActor(search);
         setMovies(results);
+        }
+        else {
+          const results = await searchMovies(search);
+        setMovies(results);
+        }
+        
       } else {
         const trending = await fetchMoviesByCategory('Trending');
         setMovies(trending);
@@ -71,6 +84,12 @@ export default function ExploreScreen() {
           Search for Movies
         </ThemedText>
 
+        <Switch  trackColor={{false: '#5a8063', true: '#81b0ff'}}
+          thumbColor={'#f5dd4b'}
+          onValueChange={toggleSwitch} value={searchByActor}/>
+        {! searchByActor && ( <ThemedText > search by movie</ThemedText>)}
+        {searchByActor && ( <ThemedText > search by actor</ThemedText>)}
+          
         <TextInput
           placeholder="Search..."
           placeholderTextColor={theme.textSecondary}
@@ -207,6 +226,11 @@ function sortMovies(sortKey: string) {
 }
 
 const styles = StyleSheet.create({
+  switch: {
+    flex: 1,
+    alignItems: 'center',
+     justifyContent: 'flex-start',
+  },
   container: {
     flex: 1,
     paddingHorizontal: 16,
