@@ -1,4 +1,4 @@
-import { ThemedText } from '@/components/themed-text';
+ import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import type { Movie } from '@/types/movie';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,11 @@ import { Alert, Animated, FlatList, Image, Linking, Pressable, ScrollView, Style
 import { actorsByMovie, fetchMovieTrailer, getGenreNames } from '../api/tmdb';
 import { Actor, ActorCard } from './ActorCard';
 
+ import { fetchActorDetails } from '../api/tmdb';
+
+
+
+  
 interface MovieModalProps {
   movie: Movie | null;
   visible: boolean;
@@ -37,6 +42,21 @@ export function MovieModal({
   const hasLongDescription = Boolean(movie?.description && movie.description.length > 220);
   const [actors, setActors] = useState<Actor[]>([]);
 
+  // Pridėkite šias būsenas
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
+  const [actorDetails, setActorDetails] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // Funkcija kai paspaudžiamas aktorius
+  const handleActorPress = async (actor: Actor) => {
+    setSelectedActor(actor);
+    setModalVisible(true);
+    
+    // Užkrauname detalesnę informaciją
+    const details = await fetchActorDetails(actor.id);
+    setActorDetails(details);
+  };
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: visible ? 1 : 0,
@@ -45,21 +65,25 @@ export function MovieModal({
     }).start();
   }, [visible, fadeAnim]);
 
-  useEffect(() => {
+
+    useEffect(() => {
     setDescriptionExpanded(false);
-  }, [movie?.id, visible]);
+    }, [movie?.id, visible]);
 
-   useEffect(   () => {
-     const loadActors = async () => {
-      if (!movie) return;
-      let actors = await actorsByMovie(movie.id);
-      setActors(actors);
-    }
-    const delayDebounceFn = setTimeout(loadActors, 0);
-    return () => clearTimeout(delayDebounceFn);
+    useEffect(() => {
+      const loadActors = async () => {
+        if (!movie) return;
+        try {
+          const actors = await actorsByMovie(movie.id);
+          setActors(actors);
+        } catch (error) {
+          console.error('Klaida kraunant aktorius:', error);
+          setActors([]);
+        }
+      };
     
-  });
-
+      loadActors();
+    }, [movie?.id]); // Priklauso tik nuo movie.id
   
   
   const handleWatchTrailer = async () => {
@@ -173,26 +197,28 @@ export function MovieModal({
               )}
             </TouchableOpacity>
             <ThemedText style={[styles.sectionTitle, { color: theme.title }]}>Actors</ThemedText>
-            <FlatList
-                data={actors} horizontal = { true}
-                //numColumns={2}
-               // columnWrapperStyle={styles.listRow}
-                // keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  // <TouchableOpacity onPress={() => setSelectedMovie(item)}>
-                  //   <MovieCard movie={item} />
-                  // </TouchableOpacity>
-                  <ActorCard actor={item} />
-                )}
-
-                
-          />
+            {}
+              <FlatList
+              data={actors}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <ActorCard actor={item} onPress={handleActorPress} />
+              )}
+              ListEmptyComponent={
+                <ThemedText style={{ padding: 20 }}>No actors found</ThemedText>
+              }
+              />
           </ScrollView>
         </Animated.View>
       </View>
     </Animated.View>
   );
+  {/* Pridėkite modalą komponento gale */}
+  
 }
+
 
 const styles = StyleSheet.create({
   actionsContainer: {
@@ -316,3 +342,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+// MovieModal.tsx - pridėkite šiuos pakeitimus
