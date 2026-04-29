@@ -56,6 +56,13 @@ export function MovieModal({
     const details = await fetchActorDetails(actor.id);
     setActorDetails(details);
   };
+  const genreNames = getGenreNames(movie?.genre ?? []);
+  const genreText =
+    genreNames.length > 0
+      ? genreNames.join(', ')
+      : Array.isArray(movie?.genre)
+      ? movie.genre.filter(Boolean).join(', ')
+      : '';
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -120,7 +127,7 @@ export function MovieModal({
                 {movie.title}
               </ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.subtitleText} numberOfLines={2}>
-                {movie.year} | {getGenreNames(movie.genre).join(', ')}
+                {movie.year}{genreText ? ` | ${genreText}` : ''}
               </ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.subtitleText}>
                 {'\u2B50'} {movie.rating.toFixed(1)} IMDB
