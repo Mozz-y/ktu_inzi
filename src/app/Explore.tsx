@@ -27,6 +27,7 @@ export default function ExploreScreen() {
   const genres = ['All Genres', 'Action', 'Drama', 'Comedy', 'Sci-Fi'];
   const sorting = ['Rating', 'Year', 'Title'];
   const { add, remove, isInWishlist } = useWishlist();
+  
   const { movies: watchedMovies, addMovie, rateMovie, removeMovie } = useWatched();
 
   const [searchByActor, setSearchByActor] = useState(false);
