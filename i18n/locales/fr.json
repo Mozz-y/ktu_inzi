@@ -1,0 +1,109 @@
+{
+  "tabs": {
+    "home": "Accueil",
+    "explore": "Explorer",
+    "profile": "Profil"
+  },
+  "header": {
+    "subtitle": "Découvrez, notez et suivez vos films préférés"
+  },
+  "home": {
+    "categories": {
+      "trending": "Tendances",
+      "recommended": "Recommandés",
+      "newReleases": "Nouveautés",
+      "wishlist": "Liste d’envies",
+      "popular": "Populaires"
+    },
+    "emptyWishlist": "Commencez à ajouter les films que vous voulez voir !"
+  },
+  "explore": {
+    "title": "Recherche de films",
+    "searchPlaceholder": "Rechercher...",
+    "searchByMovie": "Rechercher par film",
+    "searchByActor": "Rechercher par acteur",
+    "actorSearchPlaceholder": "Rechercher par acteur...",
+    "genres": {
+      "allGenres": "Tous les genres",
+      "action": "Action",
+      "drama": "Drame",
+      "comedy": "Comédie",
+      "thriller": "Thriller",
+      "scienceFiction": "Science-fiction",
+      "animation": "Animation",
+      "family": "Famille"
+    },
+    "sorting": {
+      "rating": "Note",
+      "year": "Année",
+      "title": "Titre"
+    },
+    "emptyResults": "Aucun film trouvé. Essayez un autre titre !"
+  },
+  "profile": {
+    "aboutMe": "À propos de moi",
+    "stats": {
+      "moviesWatched": "Films vus",
+      "moviesRated": "Films notés",
+      "watchLater": "À voir plus tard",
+      "avgRating": "Note moyenne"
+    },
+    "tabs": {
+      "alreadySeen": "Déjà vus",
+      "friends": "Amis",
+      "settings": "Paramètres"
+    },
+    "emptyWatched": "Vous n’avez encore vu aucun film.",
+    "settings": {
+      "title": "Paramètres",
+      "nightMode": "Mode nuit",
+      "notifications": "Notifications",
+      "autoplayTrailers": "Lecture automatique des bandes-annonces",
+      "favoriteGenres": "Genres préférés",
+      "language": "Langue",
+      "lithuanian": "Lituanien",
+      "english": "Anglais",
+      "russian": "Russe",
+      "german": "Allemand",
+      "french": "Français"
+    },
+    "favoriteGenres": {
+      "action": "Action",
+      "drama": "Drame",
+      "comedy": "Comédie",
+      "sciFi": "Science-fiction"
+    },
+    "imagePickerCancelled": "Vous n’avez sélectionné aucune image.",
+    "defaultName": "Fan de cinéma",
+    "defaultBio": "Un profil de suivi des films",
+    "changePhoto": "Changer la photo"
+  },
+  "movie": {
+    "description": "Description",
+    "showLess": "Afficher moins",
+    "readMore": "Lire la suite",
+    "removeFromWishlist": "Retirer de la liste d’envies",
+    "addToWishlist": "Ajouter à la liste d’envies",
+    "removeFromWatched": "Retirer des films vus",
+    "markAsWatched": "Marquer comme vu",
+    "yourRating": "Votre note :",
+    "yourRatingInline": "Votre note : ⭐ {{rating}}",
+    "imdb": "IMDB",
+    "watchTrailer": "Voir la bande-annonce",
+    "actors": "Acteurs"
+  },
+  "errors": {
+    "initializationFailed": "Échec de l’initialisation"
+  },
+  "common": {
+    "docs": "Docs",
+    "tryEditing": "Essayer de modifier"
+  },
+  "actor": {
+    "character": "Rôle",
+    "popularity": "Popularité",
+    "born": "Date de naissance",
+    "bornIn": "Lieu de naissance",
+    "biography": "Biographie"
+  }
+}

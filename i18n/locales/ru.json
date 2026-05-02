@@ -1,0 +1,109 @@
+{
+  "tabs": {
+    "home": "Главная",
+    "explore": "Поиск",
+    "profile": "Профиль"
+  },
+  "header": {
+    "subtitle": "Открывайте, оценивайте и отслеживайте любимые фильмы"
+  },
+  "home": {
+    "categories": {
+      "trending": "В тренде",
+      "recommended": "Рекомендованные",
+      "newReleases": "Новинки",
+      "wishlist": "Список желаний",
+      "popular": "Популярные"
+    },
+    "emptyWishlist": "Начните добавлять фильмы, которые хотите посмотреть!"
+  },
+  "explore": {
+    "title": "Поиск фильмов",
+    "searchPlaceholder": "Поиск...",
+    "searchByMovie": "Поиск по фильму",
+    "searchByActor": "Поиск по актёру",
+    "actorSearchPlaceholder": "Поиск по актёру...",
+    "genres": {
+      "allGenres": "Все жанры",
+      "action": "Боевик",
+      "drama": "Драма",
+      "comedy": "Комедия",
+      "thriller": "Триллер",
+      "scienceFiction": "Научная фантастика",
+      "animation": "Анимация",
+      "family": "Семейный"
+    },
+    "sorting": {
+      "rating": "Рейтинг",
+      "year": "Год",
+      "title": "Название"
+    },
+    "emptyResults": "Фильмы не найдены. Попробуйте другое название!"
+  },
+  "profile": {
+    "aboutMe": "Обо мне",
+    "stats": {
+      "moviesWatched": "Просмотрено фильмов",
+      "moviesRated": "Оценено фильмов",
+      "watchLater": "Посмотреть позже",
+      "avgRating": "Средняя оценка"
+    },
+    "tabs": {
+      "alreadySeen": "Уже просмотрено",
+      "friends": "Друзья",
+      "settings": "Настройки"
+    },
+    "emptyWatched": "Вы ещё не смотрели фильмы.",
+    "settings": {
+      "title": "Настройки",
+      "nightMode": "Ночной режим",
+      "notifications": "Уведомления",
+      "autoplayTrailers": "Автовоспроизведение трейлеров",
+      "favoriteGenres": "Любимые жанры",
+      "language": "Язык",
+      "lithuanian": "Литовский",
+      "english": "Английский",
+      "russian": "Русский",
+      "german": "Немецкий",
+      "french": "Французский"
+    },
+    "favoriteGenres": {
+      "action": "Боевик",
+      "drama": "Драма",
+      "comedy": "Комедия",
+      "sciFi": "Научная фантастика"
+    },
+    "imagePickerCancelled": "Вы не выбрали изображение.",
+    "defaultName": "Любитель кино",
+    "defaultBio": "Профиль для отслеживания фильмов",
+    "changePhoto": "Изменить фото"
+  },
+  "movie": {
+    "description": "Описание",
+    "showLess": "Скрыть",
+    "readMore": "Читать далее",
+    "removeFromWishlist": "Удалить из списка желаний",
+    "addToWishlist": "Добавить в список желаний",
+    "removeFromWatched": "Удалить из просмотренных",
+    "markAsWatched": "Отметить как просмотренный",
+    "yourRating": "Ваша оценка:",
+    "yourRatingInline": "Ваша оценка: ⭐ {{rating}}",
+    "imdb": "IMDB",
+    "watchTrailer": "Смотреть трейлер",
+    "actors": "Актёры"
+  },
+  "errors": {
+    "initializationFailed": "Ошибка инициализации"
+  },
+  "common": {
+    "docs": "Документы",
+    "tryEditing": "Попробуйте изменить"
+  },
+  "actor": {
+    "character": "Роль",
+    "popularity": "Популярность",
+    "born": "Дата рождения",
+    "bornIn": "Место рождения",
+    "biography": "Биография"
+  }
+}
