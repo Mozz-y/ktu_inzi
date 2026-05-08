@@ -65,7 +65,14 @@
       "english": "English",
       "russian": "Russian",
       "german": "German",
-      "french": "French"
+      "french": "French",
+      "resetPassword": "Reset Password",
+      "logOut": "Log Out",
+      "deleteAccount": "Delete Account",
+      "deleteConfirmTitle": "Are you sure?",
+      "deleteConfirmMessage": "This action is permanent and all your data will be lost.",
+      "cancel": "Cancel",
+      "delete": "Delete"
     },
     "favoriteGenres": {
       "action": "Action",
@@ -105,5 +112,63 @@
     "born": "Born",
     "bornIn": "Born in",
     "biography": "Biography"
+  },
+  "login": {
+    "welcome_back": "Welcome back",
+    "sign_in_subtitle": "Sign in to your account",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "password_label": "Password",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Forgot password?",
+    "sign_in_button": "Sign in",
+    "no_account": "Don't have an account?",
+    "create_account": "Create account"
+},
+  "register": {
+    "create_account": "Create account",
+    "step_1": "Step 1 of 2: Account credentials",
+    "step_2": "Step 2 of 2: Personalize your profile",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "password_label": "Password",
+    "password_placeholder": "••••••••",
+    "confirm_password_label": "Confirm Password",
+    "next_button": "Next",
+    "back_button": "Back",
+    "submit_button": "Create Account",
+    "add_photo": "Add Photo",
+    "change_photo": "Change Photo",
+    "username_label": "Username",
+    "username_placeholder": "johndoe",
+    "bio_label": "Bio",
+    "bio_placeholder": "Tell us about yourself...",
+    "categories_label": "Favorite Movie Categories",
+    "already_have_account": "Already have an account?",
+    "sign_in": "Sign in"
+  },
+  "forgot_password": {
+    "title": "Forgot password?",
+    "subtitle": "We'll send you a reset link",
+    "success_title": "Check your email",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "send_button": "Send Reset Link",
+    "success_message": "We've sent a password reset link to ",
+    "success_instruction": ". Check your inbox and follow the instructions.",
+    "back_to_login": "Back to Login",
+    "remember_password": "Remember your password?",
+    "sign_in": "Sign in"
+  },
+  "reset_password": {
+    "title": "Reset password",
+    "subtitle": "Choose a new password",
+    "success_title": "Success",
+    "old_password_label": "Current Password",
+    "new_password_label": "New Password",
+    "button": "Update Password",
+    "success_message": "Your password has been successfully updated. You can now sign in with your new password.",
+    "go_to_login": "Go to Login",
+    "back_to_sign_in": "Back to sign in"
   }
 }

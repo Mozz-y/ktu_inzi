@@ -12,13 +12,13 @@ import {
   Modal,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   actorsByMovie,

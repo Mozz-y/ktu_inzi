@@ -1,6 +1,5 @@
 import { fetchGenres } from '@/api/tmdb';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { initDatabase } from '@/database/database';
@@ -8,6 +7,7 @@ import { useAppColorScheme } from '@/hooks/use-app-color-scheme';
 import { ThemePreferenceProvider } from '@/providers/theme-preference-provider';
 import { UserService } from '@/services/user';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
 import * as SystemUI from 'expo-system-ui';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
@@ -75,7 +75,7 @@ function AppThemeContent() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AnimatedSplashOverlay />
-      <AppTabs />
+      <Stack screenOptions={{ headerShown: false }} />
     </ThemeProvider>
   );
 }

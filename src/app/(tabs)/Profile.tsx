@@ -1,3 +1,4 @@
+import { MovieModal } from "@/components/MovieModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useTheme } from "@/hooks/use-theme";
@@ -8,6 +9,7 @@ import type { Movie } from "@/types/movie";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -21,7 +23,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { MovieModal } from "../components/MovieModal";
 
 type ProfileTab = "alreadySeen" | "friends" | "settings";
 
@@ -256,6 +257,30 @@ export default function ProfileScreen() {
     { key: "friends", label: t("profile.tabs.friends") },
     { key: "settings", label: t("profile.tabs.settings") },
   ];
+
+  const handleLogOut = async () => {
+  console.log("Atsijungiama...");
+  // Čia vėliau pridėsi UserService.logout()
+  router.replace('/Login'); 
+};
+
+const handleDeleteAccount = () => {
+  Alert.alert(
+    t("profile.settings.deleteConfirmTitle"),
+    t("profile.settings.deleteConfirmMessage"),
+    [
+      { text: t("profile.settings.cancel"), style: "cancel" },
+      { 
+        text: t("profile.settings.delete"), 
+        style: "destructive", 
+        onPress: () => {
+          console.log("Paskyra trinama...");
+          router.replace('/Login');
+        } 
+      },
+    ]
+  );
+};
 
   return (
     <ThemedView style={{ flex: 1 }}>
@@ -604,6 +629,37 @@ export default function ProfileScreen() {
                   theme={theme}
                 />
               </View>
+              <View style={styles.actionButtonsContainer}>
+              {/* 1. Reset Password - nukreipiame į tavo sukurtą langą */}
+              <TouchableOpacity 
+                style={[styles.actionButton, { borderColor: theme.primary }]}
+                onPress={() => router.push('/ResetPassword')}
+              >
+                <ThemedText style={{ color: theme.primary, fontWeight: '600' }}>
+                  {t("profile.settings.resetPassword")}
+                </ThemedText>
+              </TouchableOpacity>
+
+              {/* 2. Log Out */}
+              <TouchableOpacity 
+                style={[styles.actionButton, { borderColor: theme.border }]}
+                onPress={handleLogOut}
+              >
+                <ThemedText style={{ color: theme.text, fontWeight: '600' }}>
+                  {t("profile.settings.logOut")}
+                </ThemedText>
+              </TouchableOpacity>
+
+              {/* 3. Delete Account - naudojame 'danger' spalvą iš tavo theme.ts */}
+              <TouchableOpacity 
+                style={[styles.actionButton, { borderColor: theme.danger, marginTop: 20 }]}
+                onPress={handleDeleteAccount}
+              >
+                <ThemedText style={{ color: theme.danger, fontWeight: '700' }}>
+                  {t("profile.settings.deleteAccount")}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
             </View>
           )}
         </View>
@@ -916,5 +972,17 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingVertical: 7,
     paddingHorizontal: 12,
+  },
+  actionButtonsContainer: {
+    marginTop: 24,
+    gap: 12,
+  },
+  actionButton: {
+    width: '100%',
+    height: 48,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
