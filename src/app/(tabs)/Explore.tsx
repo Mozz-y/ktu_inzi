@@ -1,3 +1,9 @@
+import {
+  fetchGenres,
+  fetchMoviesByCategory,
+  searchMovies,
+  searchMoviesByActor,
+} from '@/api/tmdb';
 import { MovieCard } from '@/components/MovieCard';
 import { MovieModal } from '@/components/MovieModal';
 import { ThemedText } from '@/components/themed-text';
@@ -20,12 +26,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  fetchGenres,
-  fetchMoviesByCategory,
-  searchMovies,
-  searchMoviesByActor,
-} from '../api/tmdb';
 
 type GenreOption = {
   key: string;

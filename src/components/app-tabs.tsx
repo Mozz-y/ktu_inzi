@@ -19,14 +19,6 @@ export default function AppTabs() {
         tabBarStyle: { backgroundColor: colors.background },
       }}
     >
-      {/* Expo Router automatiškai mato src/app/index.tsx, todėl jį reikia paslėpti iš tab bar. */}
-      <Tabs.Screen
-        name="index"
-        options={{
-          href: null,
-        }}
-      />
-
       <Tabs.Screen
         name="Home"
         options={{

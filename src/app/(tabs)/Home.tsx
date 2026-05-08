@@ -1,3 +1,4 @@
+import { fetchMoviesByCategory } from "@/api/tmdb";
 import { Header } from "@/components/Header";
 import { MovieCard } from "@/components/MovieCard";
 import { MovieModal } from "@/components/MovieModal";
@@ -23,7 +24,6 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchMoviesByCategory } from "../api/tmdb";
 
 const screenWidth = Dimensions.get("window").width;
 
