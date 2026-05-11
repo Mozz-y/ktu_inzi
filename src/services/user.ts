@@ -7,6 +7,7 @@ export let currentUser: User | null = null;
 
 const webUser: User = {
   id: 'web-user',
+  created_at: Date.now(),
   theme_preference: 'system',
 };
 

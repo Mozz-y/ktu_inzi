@@ -122,7 +122,7 @@ export default function LoginScreen() {
 
           {/* 5. Forgot password perkeltas po mygtuku */}
           <TouchableOpacity style={[styles.forgotPasswordContainer, { marginTop: Spacing.three }]}
-            onPress={() => router.push('/ForgotPassword')}>
+            onPress={() => router.push('./ForgotPassword')}>
             <Text style={[styles.linkText, { color: colors.textSecondary }]}>
               {t('login.forgot_password')}
             </Text>
@@ -134,7 +134,7 @@ export default function LoginScreen() {
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>
             {t('login.no_account')} 
           </Text>
-          <TouchableOpacity onPress={() => router.push('/Register')}>
+          <TouchableOpacity onPress={() => router.push('./Register')}>
             <Text style={[styles.linkTextBold, { color: colors.primary }]}>
               {t('login.create_account')}
             </Text>

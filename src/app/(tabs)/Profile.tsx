@@ -261,7 +261,7 @@ export default function ProfileScreen() {
   const handleLogOut = async () => {
   console.log("Atsijungiama...");
   // Čia vėliau pridėsi UserService.logout()
-  router.replace('/Login'); 
+  router.replace('../Login'); 
 };
 
 const handleDeleteAccount = () => {
@@ -275,7 +275,7 @@ const handleDeleteAccount = () => {
         style: "destructive", 
         onPress: () => {
           console.log("Paskyra trinama...");
-          router.replace('/Login');
+          router.replace('../Login');
         } 
       },
     ]
@@ -633,7 +633,7 @@ const handleDeleteAccount = () => {
               {/* 1. Reset Password - nukreipiame į tavo sukurtą langą */}
               <TouchableOpacity 
                 style={[styles.actionButton, { borderColor: theme.primary }]}
-                onPress={() => router.push('/ResetPassword')}
+                onPress={() => router.push('../ResetPassword')}
               >
                 <ThemedText style={{ color: theme.primary, fontWeight: '600' }}>
                   {t("profile.settings.resetPassword")}

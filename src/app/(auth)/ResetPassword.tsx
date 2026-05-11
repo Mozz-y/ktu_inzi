@@ -5,15 +5,15 @@ import { router, Tabs } from 'expo-router';
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -161,7 +161,7 @@ export default function ResetPasswordScreen() {
                   
                   <TouchableOpacity 
                     style={[styles.button, { backgroundColor: colors.primary, marginTop: Spacing.three }]} 
-                    onPress={() => router.replace('/Login')}
+                    onPress={() => router.replace('./Login')}
                   >
                     <Text style={[styles.buttonText, { color: colors.primaryText }]}>
                       {t('reset_password.go_to_login')}
