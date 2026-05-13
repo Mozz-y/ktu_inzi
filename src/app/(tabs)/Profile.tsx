@@ -6,6 +6,7 @@ import { useWatched } from "@/hooks/useWatched";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useThemePreference } from "@/providers/theme-preference-provider";
 import type { Movie } from "@/types/movie";
+import { supabase } from "@/lib/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -259,10 +260,16 @@ export default function ProfileScreen() {
   ];
 
   const handleLogOut = async () => {
-  console.log("Atsijungiama...");
-  // Čia vėliau pridėsi UserService.logout()
-  router.replace('../Login'); 
-};
+    console.log("Atsijungiama...");
+    try {
+      await supabase.auth.signOut();
+      router.replace('../Login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still redirect to login even if logout fails
+      router.replace('../Login');
+    }
+  };
 
 const handleDeleteAccount = () => {
   Alert.alert(

@@ -6,6 +6,7 @@ import { router, Tabs } from 'expo-router';
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -17,6 +18,7 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '@/lib/supabase';
 
 const movieCategories = [
   "Action", "Comedy", "Drama", "Horror", 
@@ -39,6 +41,7 @@ export default function RegisterScreen() {
   // Slaptažodžių matomumo būsenos
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { t } = useTranslation();
   const colors = useTheme();
@@ -74,11 +77,42 @@ export default function RegisterScreen() {
     setStep(2);
   };
 
-  const handleSubmit = () => {
-    console.log("Registruojama:", {
-      email, password, username, description, selectedCategories, profileImage
-    });
-    router.replace('/Home');
+  const handleSubmit = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert(t('register.error'), t('register.fill_all_fields'));
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert(t('register.error'), t('register.passwords_not_match'));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+            description,
+            selected_categories: selectedCategories,
+          }
+        }
+      });
+
+      if (error) {
+        Alert.alert(t('register.error'), error.message);
+      } else {
+        Alert.alert(t('register.success'), t('register.check_email'));
+        router.replace('./Login');
+      }
+    } catch (error) {
+      Alert.alert(t('register.error'), t('register.unexpected_error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -256,9 +290,10 @@ export default function RegisterScreen() {
                     <TouchableOpacity 
                         style={[styles.button, { backgroundColor: colors.primary, marginTop: Spacing.three }]} 
                         onPress={handleSubmit}
+                        disabled={loading}
                         >
                         <Text style={[styles.buttonText, { color: colors.primaryText }]}>
-                            {t('register.submit_button')}
+                            {loading ? t('register.creating_account') : t('register.submit_button')}
                         </Text>
                     </TouchableOpacity>
                   </View>

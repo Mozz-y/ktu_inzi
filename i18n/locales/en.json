@@ -122,8 +122,12 @@
     "password_placeholder": "••••••••",
     "forgot_password": "Forgot password?",
     "sign_in_button": "Sign in",
+    "signing_in": "Signing in...",
     "no_account": "Don't have an account?",
-    "create_account": "Create account"
+    "create_account": "Create account",
+    "error": "Error",
+    "fill_all_fields": "Please fill in all fields",
+    "unexpected_error": "An unexpected error occurred"
 },
   "register": {
     "create_account": "Create account",
@@ -137,6 +141,7 @@
     "next_button": "Next",
     "back_button": "Back",
     "submit_button": "Create Account",
+    "creating_account": "Creating account...",
     "add_photo": "Add Photo",
     "change_photo": "Change Photo",
     "username_label": "Username",
@@ -145,7 +150,13 @@
     "bio_placeholder": "Tell us about yourself...",
     "categories_label": "Favorite Movie Categories",
     "already_have_account": "Already have an account?",
-    "sign_in": "Sign in"
+    "sign_in": "Sign in",
+    "error": "Error",
+    "fill_all_fields": "Please fill in all fields",
+    "passwords_not_match": "Passwords do not match",
+    "unexpected_error": "An unexpected error occurred",
+    "success": "Success",
+    "check_email": "Please check your email to confirm your account"
   },
   "forgot_password": {
     "title": "Forgot password?",

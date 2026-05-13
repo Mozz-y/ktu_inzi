@@ -5,6 +5,7 @@ import { router, Tabs } from 'expo-router';
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -12,6 +13,7 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -19,14 +21,36 @@ export default function LoginScreen() {
   
   // 2. Sukuriame būseną, kuri valdys slaptažodžio matomumą
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const { t } = useTranslation();
 
   const colors = useTheme();
 
-  const handleSubmit = () => {
-    console.log("Bandoma prisijungti su:", { email, password });
-    router.replace('/Home');
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      Alert.alert(t('login.error'), t('login.fill_all_fields'));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        Alert.alert(t('login.error'), error.message);
+      } else {
+        console.log("Prisijungta sėkmingai:", data.user);
+        router.replace('/Home');
+      }
+    } catch (error) {
+      Alert.alert(t('login.error'), t('login.unexpected_error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,9 +138,10 @@ export default function LoginScreen() {
           <TouchableOpacity 
             style={[styles.button, { backgroundColor: colors.primary }]} 
             onPress={handleSubmit}
+            disabled={loading}
           >
             <Text style={[styles.buttonText, { color: colors.primaryText }]}>
-              {t('login.sign_in_button')}
+              {loading ? t('login.signing_in') : t('login.sign_in_button')}
             </Text>
           </TouchableOpacity>
 
