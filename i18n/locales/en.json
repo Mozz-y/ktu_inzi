@@ -159,6 +159,8 @@
     "check_email": "Please check your email to confirm your account"
   },
   "forgot_password": {
+    "error": "error",
+    "unexpected_error": "unexpected error",
     "title": "Forgot password?",
     "subtitle": "We'll send you a reset link",
     "success_title": "Check your email",
