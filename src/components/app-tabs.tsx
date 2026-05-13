@@ -1,14 +1,12 @@
-import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme } from 'react-native';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function AppTabs() {
   const { t } = useTranslation();
-  const scheme = useColorScheme();
-  const colors = Colors[scheme ?? 'light'];
+  const colors = useTheme();
 
   return (
     <Tabs
