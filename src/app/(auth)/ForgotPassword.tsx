@@ -2,9 +2,12 @@ import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Ionicons } from '@expo/vector-icons';
 import { router, Tabs } from 'expo-router';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { supabase } from '@/lib/supabase';
+
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -25,10 +28,40 @@ export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
   const colors = useTheme();
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      async (event) => {
+        if (event === "PASSWORD_RECOVERY") {
+          console.log("Password recovery");
+          router.replace("./ResetPassword");
+        }
+      }
+    );
+
+    return () => {
+      subscription.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSubmit = async () => {
     if (!email) return;
     console.log("Forgot password užklausa:", { email });
-    setSubmitted(true);
+    try {
+
+      const{ data, error } = await supabase.auth.resetPasswordForEmail(email
+        
+        );
+          
+    
+          if (error) {
+            Alert.alert(t('forgot_password.error'), error.message);
+          } else {
+            setSubmitted(true);
+          }
+        } catch (error) {
+           Alert.alert(t('forgot_password.error'), (t('forgot_password.unexpected_error')));
+        } 
+    
   };
 
 return (
