@@ -1,56 +1,78 @@
-# Welcome to your Expo app 👋
+# BingeLog 🎬
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Discover. Watch. Rate. Remember.**
 
-## Get started
+BingeLog is a mobile movie discovery and tracking application that allows users to explore movies, view detailed information, watch trailers, check actors, rate movies, and manage their personal movie experience in one place.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 📱 About
 
-2. Start the app
+BingeLog is designed for movie lovers who want an easy way to discover and track films.
 
-   ```bash
-   npx expo start
-   ```
+Users can browse popular and recommended movies, search by title, year, or actor, open detailed movie pages, watch trailers, view cast information, and rate movies.
 
-In the output, you'll find options to open the app in a
+The app also includes user authentication, allowing registered users to access personal features such as profile, ratings, wishlist, and watched movie history.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## ✨ Features
 
-## Get a fresh project
+- Explore popular and recommended movies
+- Search movies by title
+- Search movies by release year
+- Search movies by actor
+- View detailed movie descriptions
+- View movie posters, release dates, ratings, and metadata
+- Watch movie trailers
+- View actors and cast information
+- Rate movies
+- Add movies to wishlist
+- Track watched movies
+- Register and log in with a user account
+- Access personal profile information
+- Protected pages for authenticated users
 
-When you're ready, run:
+---
 
-```bash
-npm run reset-project
-```
+## 📸 Visuals
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Screenshots will be added later.
 
-### Other setup steps
+Suggested screenshots:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- Home page
+- Explore page
+- Movie details page
+- Trailer view
+- Login page
+- Profile page
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🛠️ Tech Stack
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- React Native
+- Expo
+- Expo Router
+- TypeScript
+- Supabase
+- Jest
+- ts-jest
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 📋 Prerequisites
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Before running the project, make sure you have installed:
+
+- Node.js
+- npm
+- Git
+- Expo Go app on a mobile device or an emulator
+
+You also need a configured Supabase project for authentication and backend-related functionality.
+
+---
+
+## 🚀 Getting Started
