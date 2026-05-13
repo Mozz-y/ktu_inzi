@@ -1,5 +1,6 @@
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { supabase } from '@/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker'; // Biblioteka galerijai
 import { router, Tabs } from 'expo-router';
@@ -18,7 +19,6 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '@/lib/supabase';
 
 const movieCategories = [
   "Action", "Comedy", "Drama", "Horror", 
@@ -118,14 +118,16 @@ export default function RegisterScreen() {
   return (
     <SafeAreaView style={[styles.background, { backgroundColor: colors.backgroundElement }]}>
       {/* KeyboardAvoidingView neleidžia klaviatūrai paslėpti laukelių */}
-      <KeyboardAvoidingView 
-        style={{ flex: 1 }} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }} 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+        >
         <Tabs.Screen options={{ headerShown: false, tabBarStyle: { display: 'none' }, href: null }} />
         <ScrollView 
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
             
@@ -322,8 +324,11 @@ export default function RegisterScreen() {
 // Stiliai, atsakingi tik už formą ir struktūrą
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  scrollContent: { flexGrow: 1, justifyContent: 'center', paddingVertical: 40 },
-  container: { flex: 1, justifyContent: 'center', paddingHorizontal: 20, maxWidth: MaxContentWidth, width: '100%', alignSelf: 'center' },
+  scrollContent: { flexGrow: 1, justifyContent: 'center', paddingVertical: 40, paddingBottom: 80 },
+  container: { paddingHorizontal: 20, 
+  maxWidth: MaxContentWidth, 
+  width: '100%', 
+  alignSelf: 'center'  },
   header: { alignItems: 'center', justifyContent: 'center', width: '100%', position: 'relative' },
   backArrow: { position: 'absolute', left: 0, top: 0, zIndex: 10 },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
