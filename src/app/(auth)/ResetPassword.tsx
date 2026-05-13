@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,6 +14,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -52,8 +54,10 @@ export default function ResetPasswordScreen() {
 
       <KeyboardAvoidingView 
         style={{ flex: 1 }} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
       >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView 
           contentContainerStyle={styles.scrollContent} 
           showsVerticalScrollIndicator={false}
@@ -172,6 +176,7 @@ export default function ResetPasswordScreen() {
             </View>
           </View>
         </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -179,7 +184,10 @@ export default function ResetPasswordScreen() {
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  scrollContent: { flexGrow: 1, justifyContent: 'center' },
+  scrollContent: { flexGrow: 1, 
+  justifyContent: 'center',
+  paddingVertical: 40,
+  paddingBottom: 80 },
   container: { paddingHorizontal: 20, maxWidth: MaxContentWidth, width: '100%', alignSelf: 'center', paddingVertical: 20 },
   header: { alignItems: 'center', position: 'relative', width: '100%' },
   backArrow: { position: 'absolute', left: 0, top: 4, zIndex: 10 },
