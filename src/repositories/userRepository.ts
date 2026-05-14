@@ -6,6 +6,9 @@ export interface User {
   id: string;
   created_at: number;
   theme_preference: AppThemePreference;
+  supabase_user_id?: string | null;
+  email?: string | null;
+  last_sync_at?: number | null;
 }
 
 export const UserRepository = {
@@ -25,5 +28,20 @@ export const UserRepository = {
 
   updateThemePreference: async (userId: string, themePreference: AppThemePreference): Promise<void> => {
     await getDB().runAsync('UPDATE users SET theme_preference = ? WHERE id = ?;', [themePreference, userId]);
+  },
+
+  updateSupabaseIdentity: async (
+    userId: string,
+    supabaseUserId: string | null,
+    email: string | null
+  ): Promise<void> => {
+    await getDB().runAsync(
+      'UPDATE users SET supabase_user_id = ?, email = ? WHERE id = ?;',
+      [supabaseUserId, email, userId]
+    );
+  },
+
+  updateLastSyncAt: async (userId: string, lastSyncAt: number | null): Promise<void> => {
+    await getDB().runAsync('UPDATE users SET last_sync_at = ? WHERE id = ?;', [lastSyncAt, userId]);
   },
 };

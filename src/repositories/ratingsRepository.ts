@@ -12,6 +12,15 @@ export interface Rating {
 export const RatingsRepository = {
   setRating: async (movieId: number, rating: number, userId: string): Promise<SQLiteRunResult> => {
     const timestamp = Math.floor(Date.now() / 1000);
+    return RatingsRepository.upsert(movieId, rating, userId, timestamp);
+  },
+
+  upsert: async (
+    movieId: number,
+    rating: number,
+    userId: string,
+    timestamp: number
+  ): Promise<SQLiteRunResult> => {
     const updateResult = await getDB().runAsync(
       'UPDATE ratings SET rating = ?, timestamp = ? WHERE movie_id = ? AND user_id = ?;',
       [rating, timestamp, movieId, userId]
@@ -47,5 +56,9 @@ export const RatingsRepository = {
       'SELECT * FROM ratings WHERE user_id = ? ORDER BY timestamp DESC;',
       [userId]
     );
+  },
+
+  clearAll: (userId: string): Promise<SQLiteRunResult> => {
+    return getDB().runAsync('DELETE FROM ratings WHERE user_id = ?;', [userId]);
   },
 };

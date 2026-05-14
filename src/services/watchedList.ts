@@ -4,6 +4,7 @@ import { HistoryRepository } from '../repositories/historyRepository';
 import { MovieRepository } from '../repositories/movieRepository';
 import { RatingsRepository } from '../repositories/ratingsRepository';
 import type { Movie as APIMovie } from '../types/movie';
+import { SyncService } from './sync';
 import { UserService } from './user';
 
 export interface WatchedMovie extends APIMovie {
@@ -79,7 +80,9 @@ export const watchedService = {
 
         try {
           if (dbMovie.genres) {
-            const firstParse = JSON.parse(dbMovie.genres);
+            const firstParse = Array.isArray(dbMovie.genres)
+              ? dbMovie.genres
+              : JSON.parse(dbMovie.genres);
             genres = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
           }
         } catch {
@@ -147,6 +150,16 @@ export const watchedService = {
 
     await HistoryRepository.add(movie.id, userId);
     await RatingsRepository.setRating(movie.id, 0, userId);
+    const now = Math.floor(Date.now() / 1000);
+    await SyncService.enqueue('history', String(movie.id), 'upsert', {
+      movieId: movie.id,
+      watchedAt: now,
+    });
+    await SyncService.enqueue('rating', String(movie.id), 'upsert', {
+      movieId: movie.id,
+      rating: 0,
+      timestamp: now,
+    });
   },
 
   async removeMovie(movieId: string): Promise<void> {
@@ -163,6 +176,12 @@ export const watchedService = {
 
     await HistoryRepository.remove(numericId, userId);
     await RatingsRepository.remove(numericId, userId);
+    await SyncService.enqueue('history', String(numericId), 'delete', {
+      movieId: numericId,
+    });
+    await SyncService.enqueue('rating', String(numericId), 'delete', {
+      movieId: numericId,
+    });
   },
 
   async updateRating(movieId: string, newUserRating: number): Promise<void> {
@@ -182,5 +201,10 @@ export const watchedService = {
     const numericId = Number(movieId);
 
     await RatingsRepository.setRating(numericId, newUserRating, userId);
+    await SyncService.enqueue('rating', String(numericId), 'upsert', {
+      movieId: numericId,
+      rating: newUserRating,
+      timestamp: Math.floor(Date.now() / 1000),
+    });
   },
 };

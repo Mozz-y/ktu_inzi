@@ -1,5 +1,6 @@
 import type { AppColorScheme, AppThemePreference } from '@/constants/theme';
 import { resolveAppColorScheme } from '@/hooks/app-color-scheme';
+import { SyncService } from '@/services/sync';
 import { UserService } from '@/services/user';
 import { createContext, useContext, useMemo, useState, type PropsWithChildren } from 'react';
 
@@ -36,6 +37,9 @@ export function ThemePreferenceProvider({ children }: PropsWithChildren) {
       themePreference,
       setThemePreference: async (preference) => {
         await UserService.updateThemePreference(preference);
+        await SyncService.enqueue('profile', UserService.getCurrentUserId(), 'upsert', {
+          themePreference: preference,
+        });
         setThemePreferenceState(preference);
 
         if (preference === 'light' || preference === 'dark') {

@@ -8,7 +8,7 @@ export interface Movie {
   poster_path?: string;
   release_date?: string;
   vote_average?: number;
-  genres?: string; // JSON string array of genre IDs
+  genres?: string | (string | number)[]; // JSON string or array of genre IDs
 }
 
 export const MovieRepository = {
@@ -28,7 +28,7 @@ export const MovieRepository = {
   },
 
   insert: (movie: Movie): Promise<SQLiteRunResult> => {
-    const genres = movie.genres ? JSON.stringify(movie.genres) : '[]';
+    const genres = serializeGenres(movie.genres);
     return getDB().runAsync(
       `INSERT OR REPLACE INTO movies (id, title, overview, poster_path, release_date, vote_average, genres)
        VALUES (?, ?, ?, ?, ?, ?, ?);`,
@@ -52,3 +52,20 @@ export const MovieRepository = {
     return getDB().getFirstAsync<Movie>('SELECT * FROM movies WHERE id = ?;', [id]);
   },
 };
+
+function serializeGenres(genres?: Movie['genres']): string {
+  if (!genres) {
+    return '[]';
+  }
+
+  if (Array.isArray(genres)) {
+    return JSON.stringify(genres);
+  }
+
+  try {
+    const parsed = JSON.parse(genres);
+    return JSON.stringify(parsed);
+  } catch {
+    return JSON.stringify([]);
+  }
+}

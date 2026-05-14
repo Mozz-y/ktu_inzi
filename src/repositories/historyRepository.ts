@@ -16,6 +16,13 @@ export const HistoryRepository = {
     );
   },
 
+  addWithTimestamp: (movieId: number, userId: string, watchedAt: number): Promise<SQLiteRunResult> => {
+    return getDB().runAsync(
+      'INSERT OR REPLACE INTO history (movie_id, user_id, watched_at) VALUES (?, ?, ?);',
+      [movieId, userId, watchedAt]
+    );
+  },
+
   remove: (movieId: number, userId: string): Promise<SQLiteRunResult> => {
     return getDB().runAsync(
         'DELETE FROM history WHERE movie_id = ? AND user_id = ?;',
@@ -28,5 +35,9 @@ export const HistoryRepository = {
       'SELECT * FROM history WHERE user_id = ? ORDER BY watched_at DESC;',
       [userId]
     );
+  },
+
+  clearAll: (userId: string): Promise<SQLiteRunResult> => {
+    return getDB().runAsync('DELETE FROM history WHERE user_id = ?;', [userId]);
   },
 };

@@ -5,6 +5,7 @@ import { Colors } from '@/constants/theme';
 import { initDatabase } from '@/database/database';
 import { useAppColorScheme } from '@/hooks/use-app-color-scheme';
 import { ThemePreferenceProvider } from '@/providers/theme-preference-provider';
+import { SyncService } from '@/services/sync';
 import { UserService } from '@/services/user';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -31,6 +32,7 @@ function AppRoot() {
         await initDatabase();
         await UserService.init();
         await fetchGenres();
+        await SyncService.initialize();
         setIsReady(true);
       } catch (err) {
         console.error('Initialization failed:', err);

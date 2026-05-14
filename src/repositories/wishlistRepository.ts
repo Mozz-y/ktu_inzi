@@ -16,6 +16,13 @@ export const WishlistRepository = {
     );
   },
 
+  addWithTimestamp: (movieId: number, userId: string, addedAt: number): Promise<SQLiteRunResult> => {
+    return getDB().runAsync(
+      'INSERT OR REPLACE INTO wishlist (movie_id, user_id, added_at) VALUES (?, ?, ?);',
+      [movieId, userId, addedAt]
+    );
+  },
+
   remove: (movieId: number, userId: string): Promise<SQLiteRunResult> => {
     return getDB().runAsync(
       'DELETE FROM wishlist WHERE movie_id = ? AND user_id = ?;',
@@ -36,5 +43,9 @@ export const WishlistRepository = {
       [movieId, userId]
     );
     return (result?.count ?? 0) > 0;
+  },
+
+  clearAll: (userId: string): Promise<SQLiteRunResult> => {
+    return getDB().runAsync('DELETE FROM wishlist WHERE user_id = ?;', [userId]);
   },
 };

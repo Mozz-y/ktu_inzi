@@ -3,6 +3,7 @@ import { runInitialMigration } from './initial';
 import { addUserSupport } from './002_add_user_support';
 import { addGenres } from './003_add_genres';
 import { addThemePreference } from './004_add_theme_preference';
+import { addSupabaseSyncSupport } from './005_add_supabase_sync';
 
 interface Migration {
   version: number;
@@ -14,6 +15,7 @@ const migrations: Migration[] = [
   { version: 2, up: addUserSupport },
   { version: 3, up: addGenres },
   { version: 4, up: addThemePreference },
+  { version: 5, up: addSupabaseSyncSupport },
 ];
 
 export const runMigrations = async (): Promise<void> => {

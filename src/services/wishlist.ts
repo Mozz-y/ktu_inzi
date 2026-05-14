@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 
 import { MovieRepository } from '../repositories/movieRepository';
 import { WishlistRepository } from '../repositories/wishlistRepository';
+import { SyncService } from './sync';
 import type { Movie as APIMovie } from '../types/movie';
 import { UserService } from './user';
 
@@ -70,7 +71,9 @@ const getAllWishlistMovies = async (): Promise<APIMovie[]> => {
 
       try {
         if (dbMovie.genres) {
-          const firstParse = JSON.parse(dbMovie.genres);
+          const firstParse = Array.isArray(dbMovie.genres)
+            ? dbMovie.genres
+            : JSON.parse(dbMovie.genres);
           genres = typeof firstParse === 'string' ? JSON.parse(firstParse) : firstParse;
         }
       } catch {
@@ -136,6 +139,11 @@ export const addToWishlist = async (movie: APIMovie): Promise<APIMovie[]> => {
 
   if (!alreadyExists) {
     await WishlistRepository.add(movie.id, userId);
+    const addedAt = Math.floor(Date.now() / 1000);
+    await SyncService.enqueue('wishlist', String(movie.id), 'upsert', {
+      movieId: movie.id,
+      addedAt,
+    });
   }
 
   return getAllWishlistMovies();
@@ -153,6 +161,9 @@ export const removeFromWishlist = async (movieId: string): Promise<APIMovie[]> =
   const numericId = Number(movieId);
 
   await WishlistRepository.remove(numericId, userId);
+  await SyncService.enqueue('wishlist', String(numericId), 'delete', {
+    movieId: numericId,
+  });
 
   return getAllWishlistMovies();
 };

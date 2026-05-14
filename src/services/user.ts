@@ -76,4 +76,42 @@ export const UserService = {
       theme_preference: themePreference,
     };
   },
+
+  async updateSupabaseIdentity(supabaseUserId: string | null, email: string | null): Promise<void> {
+    const user = UserService.getCurrentUser();
+
+    if (isWeb) {
+      currentUser = {
+        ...user,
+        supabase_user_id: supabaseUserId,
+        email,
+      };
+      return;
+    }
+
+    await UserRepository.updateSupabaseIdentity(user.id, supabaseUserId, email);
+    currentUser = {
+      ...user,
+      supabase_user_id: supabaseUserId,
+      email,
+    };
+  },
+
+  async updateLastSyncAt(lastSyncAt: number | null): Promise<void> {
+    const user = UserService.getCurrentUser();
+
+    if (isWeb) {
+      currentUser = {
+        ...user,
+        last_sync_at: lastSyncAt,
+      };
+      return;
+    }
+
+    await UserRepository.updateLastSyncAt(user.id, lastSyncAt);
+    currentUser = {
+      ...user,
+      last_sync_at: lastSyncAt,
+    };
+  },
 };
